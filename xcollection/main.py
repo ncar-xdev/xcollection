@@ -20,7 +20,7 @@ class Config:
 
 @pydantic.dataclasses.dataclass(config=Config)
 class Collection(MutableMapping):
-    datasets: typing.Dict[pydantic.StrictStr, xr.Dataset] = None
+    datasets: typing.Dict[pydantic.StrictStr, typing.Union[xr.Dataset, xr.DataArray]] = None
 
     @pydantic.validator('datasets', pre=True, each_item=True)
     def _validate_datasets(cls, value):
