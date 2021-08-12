@@ -44,6 +44,20 @@ class Collection(MutableMapping):
     def __contains__(self, key: str) -> bool:
         return key in self.datasets
 
+    def _repr_html_(self):
+        """
+        Return an html representation for the collection object.
+        Mainly for IPython notebook
+        """
+
+    def _ipython_display_(self):
+        """
+        Display the collection in the IPython notebook.
+        """
+        from IPython.display import HTML, display
+
+        display(HTML(self._repr_html_()))
+
     def keys(self):
         return self.datasets.keys()
 
