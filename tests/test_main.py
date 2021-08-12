@@ -27,3 +27,19 @@ def test_setitem_validation(value):
     c = xcollection.Collection()
     with pytest.raises(TypeError):
         c['my_key'] = value
+
+
+def test_setitem():
+    c = xcollection.Collection()
+    c['my_key'] = ds
+    assert len(c) == 1
+    assert 'my_key' in c
+
+
+def test_delitem():
+    c = xcollection.Collection({'a': ds, 'b': ds})
+    assert len(c) == 2
+    assert set(c.keys()) == {'a', 'b'}
+    del c['a']
+    assert len(c) == 1
+    assert set(c.keys()) == {'b'}
