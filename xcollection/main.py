@@ -57,6 +57,7 @@ class Collection(MutableMapping):
         Return an html representation for the collection object.
         Mainly for IPython notebook
         """
+        # TODO: Extend Xarray HTML wrapper to output collapsible dataset entries
 
     def _ipython_display_(self):
         """
