@@ -57,6 +57,8 @@ def test_getitem():
     datasets = {'a': ds, 'b': ds}
     c = xcollection.Collection(datasets)
     assert isinstance(c['a'], xr.Dataset)
+    assert c['a'] is ds
+    assert c['b'] is ds
 
     with pytest.raises(KeyError):
         c['foo']
