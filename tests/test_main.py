@@ -16,6 +16,12 @@ def test_init(datasets):
         assert set(c.keys()) == set(datasets.keys())
 
 
+def test_repr():
+    c = xcollection.Collection({'bar': ds, 'foo': ds})
+    assert 'foo' in repr(c)
+    assert 'bar' in repr(c)
+
+
 @pytest.mark.parametrize('datasets', [{'a': ds, 'b': 5}, {1: ds}, {'test': ds.Tair}])
 def test_validation_error(datasets):
     with pytest.raises(pydantic.ValidationError):
