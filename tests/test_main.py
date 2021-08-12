@@ -9,7 +9,7 @@ import xcollection
 ds = xr.tutorial.open_dataset('rasm')
 
 
-@pytest.mark.parametrize('datasets', [None, {'a': ds, 'b': ds}])
+@pytest.mark.parametrize('datasets', [None, {'a': ds, 'b': ds}, {'test': ds.Tair}])
 def test_init(datasets):
     c = xcollection.Collection(datasets)
     assert isinstance(c.datasets, dict)
@@ -26,13 +26,13 @@ def test_repr():
     assert 'bar' in repr(c)
 
 
-@pytest.mark.parametrize('datasets', [{'a': ds, 'b': 5}, {1: ds}, {'test': ds.Tair}])
+@pytest.mark.parametrize('datasets', [{'a': ds, 'b': 5}, {1: ds}])
 def test_validation_error(datasets):
     with pytest.raises(pydantic.ValidationError):
         xcollection.Collection(datasets)
 
 
-@pytest.mark.parametrize('value', [1, ds.Tair, 'test'])
+@pytest.mark.parametrize('value', [1, ds.coords, 'test'])
 def test_setitem_validation(value):
     c = xcollection.Collection()
     with pytest.raises(TypeError):

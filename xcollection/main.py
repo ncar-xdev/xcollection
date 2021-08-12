@@ -5,6 +5,14 @@ import pydantic
 import xarray as xr
 
 
+def _validate_input(value):
+    if not isinstance(value, (xr.Dataset, xr.DataArray)):
+        raise TypeError(f'Expected an xarray.Dataset or xarray.DataArray, got {type(value)}')
+    if isinstance(value, xr.DataArray):
+        return value.to_dataset()
+    return value
+
+
 class Config:
     validate_assignment = True
     arbitrary_types_allowed = True
@@ -15,10 +23,8 @@ class Collection(MutableMapping):
     datasets: typing.Dict[pydantic.StrictStr, xr.Dataset] = None
 
     @pydantic.validator('datasets', pre=True, each_item=True)
-    def _validate_dataset(cls, value):
-        if not isinstance(value, xr.Dataset):
-            raise TypeError(f'Expected an xarray.Dataset, got {type(value)}')
-        return value
+    def _validate_datasets(cls, value):
+        return _validate_input(value)
 
     def __post_init_post_parse__(self):
         if self.datasets is None:
@@ -40,9 +46,7 @@ class Collection(MutableMapping):
         return len(self.datasets)
 
     def __setitem__(self, key: str, value: xr.Dataset) -> None:
-        if not isinstance(value, xr.Dataset):
-            raise TypeError(f'Expected an xarray.Dataset, got {type(value)}')
-        self.datasets[key] = value
+        self.datasets[key] = _validate_input(value)
 
     def __contains__(self, key: str) -> bool:
         return key in self.datasets
