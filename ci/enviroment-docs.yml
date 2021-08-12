@@ -1,0 +1,21 @@
+name: xcollection-docs
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - cf_xarray
+  - jupyterlab
+  - myst-nb
+  - netcdf4
+  - pip
+  - pooch
+  - pooch
+  - pydantic
+  - sphinx-book-theme
+  - sphinx-copybutton
+  - xarray
+  - pip:
+      - sphinxext-opengraph
+      - sphinx-comments
+      - -r ../requirements.txt
+      - -e ..

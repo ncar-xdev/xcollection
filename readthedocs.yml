@@ -1,0 +1,11 @@
+# Required
+version: 2
+
+build:
+  image: latest
+
+conda:
+  environment: ci/environment-docs.yml
+
+sphinx:
+  fail_on_warning: false
