@@ -24,22 +24,22 @@ class Collection(MutableMapping):
         if self.datasets is None:
             self.datasets = {}
 
-    def __delitem__(self, key: str):
+    def __delitem__(self, key: str) -> None:
         del self.datasets[key]
 
-    def __getitem__(self, key: str):
+    def __getitem__(self, key: str) -> xr.Dataset:
         try:
             return self.datasets[key]
         except KeyError:
             raise KeyError(f'Dataset with key: `{key}` not found')
 
-    def __iter__(self):
+    def __iter__(self) -> typing.Iterator[str]:
         return iter(self.datasets)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.datasets)
 
-    def __setitem__(self, key: str, value: xr.Dataset):
+    def __setitem__(self, key: str, value: xr.Dataset) -> None:
         if not isinstance(value, xr.Dataset):
             raise TypeError(f'Expected an xarray.Dataset, got {type(value)}')
         self.datasets[key] = value
@@ -47,7 +47,7 @@ class Collection(MutableMapping):
     def __contains__(self, key: str) -> bool:
         return key in self.datasets
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         unicode_key = u'\U0001F511'
         output = ''.join(f'{unicode_key} {key}\n{repr(value)}\n\n' for key, value in self.items())
         return f'<{type(self).__name__} ({len(self)} keys)>\n{output}'
@@ -67,11 +67,11 @@ class Collection(MutableMapping):
 
         display(HTML(self._repr_html_()))
 
-    def keys(self):
+    def keys(self) -> typing.Iterable[str]:
         return self.datasets.keys()
 
-    def values(self):
+    def values(self) -> typing.Iterable[xr.Dataset]:
         return self.datasets.values()
 
-    def items(self):
+    def items(self) -> typing.Iterable[typing.Tuple[str, xr.Dataset]]:
         return self.datasets.items()
