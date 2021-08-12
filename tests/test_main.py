@@ -16,6 +16,8 @@ def test_init(datasets):
     if datasets is not None:
         assert len(c) == len(datasets)
         assert set(c.keys()) == set(datasets.keys())
+    else:
+        assert len(c) == 0
 
 
 def test_repr():
