@@ -3,6 +3,8 @@
 """ Top-level module for xcollection. """
 from pkg_resources import DistributionNotFound, get_distribution
 
+from .main import Collection
+
 try:
     __version__ = get_distribution('xcollection').version
 except DistributionNotFound:  # pragma: no cover
