@@ -46,9 +46,7 @@ class Collection(MutableMapping):
 
     def __repr__(self):
         unicode_key = u'\U0001F511'
-        output = ''.join(
-            f'{unicode_key} {key}\n{repr(value)}\n\n' for key, value in self.datasets.items()
-        )
+        output = ''.join(f'{unicode_key} {key}\n{repr(value)}\n\n' for key, value in self.items())
         return f'<{type(self).__name__} ({len(self)} keys)>\n{output}'
 
     def _repr_html_(self):
