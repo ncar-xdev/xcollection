@@ -28,7 +28,10 @@ class Collection(MutableMapping):
         del self.datasets[key]
 
     def __getitem__(self, key: str):
-        return self.datasets[key]
+        try:
+            return self.datasets[key]
+        except KeyError:
+            raise KeyError(f'Dataset with key: `{key}` not found')
 
     def __iter__(self):
         return iter(self.datasets)

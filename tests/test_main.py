@@ -1,3 +1,5 @@
+import typing
+
 import pydantic
 import pytest
 import xarray as xr
@@ -49,3 +51,17 @@ def test_delitem():
     del c['a']
     assert len(c) == 1
     assert set(c.keys()) == {'b'}
+
+
+def test_getitem():
+    datasets = {'a': ds, 'b': ds}
+    c = xcollection.Collection(datasets)
+    assert isinstance(c['a'], xr.Dataset)
+
+    with pytest.raises(KeyError):
+        c['foo']
+
+
+def test_iter():
+    c = xcollection.Collection()
+    assert isinstance(iter(c), typing.Iterator)
