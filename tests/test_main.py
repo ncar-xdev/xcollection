@@ -7,6 +7,7 @@ import xarray as xr
 import xcollection
 
 ds = xr.tutorial.open_dataset('rasm')
+dsa = xr.tutorial.open_dataset('air_temperature')
 
 
 @pytest.mark.parametrize('datasets', [None, {'a': ds, 'b': ds}, {'test': ds.Tair}])
@@ -69,3 +70,24 @@ def test_getitem():
 def test_iter():
     c = xcollection.Collection()
     assert isinstance(iter(c), typing.Iterator)
+
+
+@pytest.mark.parametrize('data_vars', ['Tair', ['Tair']])
+def test_choose_all(data_vars):
+    c = xcollection.Collection({'foo': ds, 'bar': ds})
+    d = c.choose_all(data_vars)
+    assert c == d
+    assert set(d.keys()) == {'foo', 'bar'}
+
+
+def test_choose_all_error():
+    c = xcollection.Collection({'foo': ds, 'bar': dsa})
+    with pytest.raises(KeyError):
+        c.choose_all('Tair')
+
+
+@pytest.mark.parametrize('data_vars', ['Tair', ['air']])
+def test_choose_any(data_vars):
+    c = xcollection.Collection({'foo': ds, 'bar': dsa})
+    d = c.choose_any(data_vars)
+    assert len(d) == 1

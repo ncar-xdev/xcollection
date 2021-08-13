@@ -2,6 +2,7 @@ import typing
 from collections.abc import MutableMapping
 
 import pydantic
+import toolz
 import xarray as xr
 
 
@@ -79,3 +80,35 @@ class Collection(MutableMapping):
 
     def items(self) -> typing.Iterable[typing.Tuple[str, xr.Dataset]]:
         return self.datasets.items()
+
+    def choose_all(self, data_vars: typing.Union[str, typing.List[str]]) -> 'Collection':
+        """
+        Return a dataset containing all the data variables in the collection.
+        """
+        if isinstance(data_vars, str):
+            data_vars = [data_vars]
+
+        def _select_vars(dset):
+            try:
+                return dset[data_vars]
+            except KeyError:
+                raise KeyError(f'No data variables: `{data_vars}` found in dataset: {dset!r}')
+
+        result = toolz.valmap(_select_vars, self.datasets)
+        return type(self)(datasets=result)
+
+    def choose_any(self, data_vars: typing.Union[str, typing.List[str]]) -> 'Collection':
+        """
+        Return a dataset containing any of the data variables in the collection.
+        """
+        if isinstance(data_vars, str):
+            data_vars = [data_vars]
+
+        def _select_vars(dset):
+            try:
+                return dset[data_vars]
+            except KeyError:
+                pass
+
+        result = toolz.valfilter(_select_vars, self.datasets)
+        return type(self)(datasets=result)
