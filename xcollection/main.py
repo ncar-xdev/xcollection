@@ -119,3 +119,20 @@ class Collection(MutableMapping):
             result = toolz.valfilter(_select_vars, self.datasets)
 
         return type(self)(datasets=result)
+
+    def map(self, func: typing.Callable[[xr.Dataset], xr.Dataset]) -> 'Collection':
+        """Apply a function to each dataset in the collection.
+        Parameters
+        ----------
+        func : callable
+            The function to apply to each dataset.
+
+        Returns
+        -------
+        Collection
+            A new collection containing the results of the function.
+
+        """
+        if not isinstance(func, typing.Callable):
+            raise TypeError(f'Expected a callable, got {type(func)}')
+        return type(self)(datasets=toolz.valmap(func, self.datasets))

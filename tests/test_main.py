@@ -97,3 +97,20 @@ def test_choose_any(data_vars):
     c = xcollection.Collection({'foo': ds, 'bar': dsa})
     d = c.choose(data_vars, mode='any')
     assert len(d) == 1
+
+
+def test_map():
+    c = xcollection.Collection({'foo': dsa, 'bar': dsa})
+
+    def func(x):
+        return x.air.mean()
+
+    d = c.map(func)
+    assert set(c.keys()) == set(d.keys())
+    xr.testing.assert_identical(d['foo'], func(dsa).to_dataset())
+
+
+def test_map_type_error():
+    c = xcollection.Collection()
+    with pytest.raises(TypeError):
+        c.map('func')
