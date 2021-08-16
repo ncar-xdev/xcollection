@@ -106,21 +106,16 @@ class Collection(MutableMapping):
         if isinstance(data_vars, str):
             data_vars = [data_vars]
 
-        def _select_all(dset):
+        def _select_vars(dset):
             try:
                 return dset[data_vars]
             except KeyError:
-                raise KeyError(f'No data variables: `{data_vars}` found in dataset: {dset!r}')
-
-        def _select_any(dset):
-            try:
-                return dset[data_vars]
-            except KeyError:
-                pass
+                if mode == 'all':
+                    raise KeyError(f'No data variables: `{data_vars}` found in dataset: {dset!r}')
 
         if mode == 'all':
-            result = toolz.valmap(_select_all, self.datasets)
+            result = toolz.valmap(_select_vars, self.datasets)
         elif mode == 'any':
-            result = toolz.valfilter(_select_any, self.datasets)
+            result = toolz.valfilter(_select_vars, self.datasets)
 
         return type(self)(datasets=result)
