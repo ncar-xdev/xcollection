@@ -81,30 +81,46 @@ class Collection(MutableMapping):
     def items(self) -> typing.Iterable[typing.Tuple[str, xr.Dataset]]:
         return self.datasets.items()
 
-    def choose_all(self, data_vars: typing.Union[str, typing.List[str]]) -> 'Collection':
-        """Return a collection with datasets containing all of the specified data variables."""
+    def choose(
+        self, data_vars: typing.Union[str, typing.List[str]], mode: str = 'all'
+    ) -> 'Collection':
+        """Return a collection with datasets containing all or any of the specified data variables.
+        Parameters
+        ----------
+        data_vars : str or list of str
+            The data variables to select on.
+        mode : str, optional
+            The selection mode. Must be one of 'all' or 'any'.
+
+        Returns
+        -------
+        Collection
+            A new collection containing only the selected datasets.
+
+        """
+
+        _VALID_MODES = ['all', 'any']
+        if mode not in _VALID_MODES:
+            raise ValueError(f'Invalid mode: {mode}. Accepted modes are {_VALID_MODES}')
+
         if isinstance(data_vars, str):
             data_vars = [data_vars]
 
-        def _select_vars(dset):
+        def _select_all(dset):
             try:
                 return dset[data_vars]
             except KeyError:
                 raise KeyError(f'No data variables: `{data_vars}` found in dataset: {dset!r}')
 
-        result = toolz.valmap(_select_vars, self.datasets)
-        return type(self)(datasets=result)
-
-    def choose_any(self, data_vars: typing.Union[str, typing.List[str]]) -> 'Collection':
-        """Return a collection with datasets containing any of the specified data variables."""
-        if isinstance(data_vars, str):
-            data_vars = [data_vars]
-
-        def _select_vars(dset):
+        def _select_any(dset):
             try:
                 return dset[data_vars]
             except KeyError:
                 pass
 
-        result = toolz.valfilter(_select_vars, self.datasets)
+        if mode == 'all':
+            result = toolz.valmap(_select_all, self.datasets)
+        elif mode == 'any':
+            result = toolz.valfilter(_select_any, self.datasets)
+
         return type(self)(datasets=result)

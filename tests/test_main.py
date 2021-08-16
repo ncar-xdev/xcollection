@@ -75,7 +75,7 @@ def test_iter():
 @pytest.mark.parametrize('data_vars', ['Tair', ['Tair']])
 def test_choose_all(data_vars):
     c = xcollection.Collection({'foo': ds, 'bar': ds})
-    d = c.choose_all(data_vars)
+    d = c.choose(data_vars, mode='all')
     assert c == d
     assert set(d.keys()) == {'foo', 'bar'}
 
@@ -83,11 +83,17 @@ def test_choose_all(data_vars):
 def test_choose_all_error():
     c = xcollection.Collection({'foo': ds, 'bar': dsa})
     with pytest.raises(KeyError):
-        c.choose_all('Tair')
+        c.choose('Tair', mode='all')
+
+
+def test_choose_mode_error():
+    c = xcollection.Collection()
+    with pytest.raises(ValueError):
+        c.choose('Tair', mode='foo')
 
 
 @pytest.mark.parametrize('data_vars', ['Tair', ['air']])
 def test_choose_any(data_vars):
     c = xcollection.Collection({'foo': ds, 'bar': dsa})
-    d = c.choose_any(data_vars)
+    d = c.choose(data_vars, mode='any')
     assert len(d) == 1
