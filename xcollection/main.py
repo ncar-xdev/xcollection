@@ -82,7 +82,7 @@ class Collection(MutableMapping):
         return self.datasets.items()
 
     def choose(
-        self, data_vars: typing.Union[str, typing.List[str]], mode: str = 'all'
+        self, data_vars: typing.Union[str, typing.List[str]], *, mode: str = 'any'
     ) -> 'Collection':
         """Return a collection with datasets containing all or any of the specified data variables.
         Parameters
@@ -90,7 +90,7 @@ class Collection(MutableMapping):
         data_vars : str or list of str
             The data variables to select on.
         mode : str, optional
-            The selection mode. Must be one of 'all' or 'any'.
+            The selection mode. Must be one of 'all' or 'any'. Defaults to 'any'.
 
         Returns
         -------
