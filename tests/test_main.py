@@ -99,18 +99,24 @@ def test_choose_any(data_vars):
     assert len(d) == 1
 
 
-def test_map():
+@pytest.mark.parametrize('dim, attrs', [('time', {'foo': 'bar'}), (['lat', 'lon'], {})])
+def test_map(dim, attrs):
     c = xcollection.Collection({'foo': dsa, 'bar': dsa})
 
-    def func(x):
-        return x.air.mean()
+    def func(ds, variable, attrs=None, dim=None):
+        result = ds[variable].mean(dim)
+        result.attrs = attrs
+        return result
 
-    d = c.map(func)
+    d = c.map(func, args=('air',), attrs=attrs, dim=dim)
     assert set(c.keys()) == set(d.keys())
-    xr.testing.assert_identical(d['foo'], func(dsa).to_dataset())
+    xr.testing.assert_identical(d['foo'], func(dsa, 'air', attrs=attrs, dim=dim).to_dataset())
 
 
 def test_map_type_error():
     c = xcollection.Collection()
     with pytest.raises(TypeError):
         c.map('func')
+
+    with pytest.raises(TypeError):
+        c.map(lambda x: x, args=('foo'))
