@@ -6,6 +6,18 @@ import toolz
 import xarray as xr
 
 
+def _rpartial(func, *args, **kwargs):
+    """Partially applies last arguments.
+    New keyworded arguments extend and override kwargs.
+
+    Notes
+    -----
+    This code is copied from https://github.com/Suor/funcy,
+    which is available under the BSD 3-Clause License.
+    """
+    return lambda *a, **kw: func(*(a + args), **dict(kwargs, **kw))
+
+
 def _validate_input(value):
     if not isinstance(value, (xr.Dataset, xr.DataArray)):
         raise TypeError(f'Expected an xarray.Dataset or xarray.DataArray, got {type(value)}')
@@ -119,3 +131,36 @@ class Collection(MutableMapping):
             result = toolz.valfilter(_select_vars, self.datasets)
 
         return type(self)(datasets=result)
+
+    def map(
+        self,
+        func: typing.Callable[[xr.Dataset], xr.Dataset],
+        args: typing.Sequence[typing.Any] = (),
+        **kwargs: typing.Dict[str, typing.Any],
+    ) -> 'Collection':
+        """Apply a function to each dataset in the collection.
+        Parameters
+        ----------
+        func : callable
+            The function to apply to each dataset.
+        args : tuple, optional
+            Positional arguments to pass to `func` in addition to the
+            dataset.
+        kwargs
+            Additional keyword arguments to pass as keywords arguments to
+            `func`.
+
+        Returns
+        -------
+        Collection
+            A new collection containing the results of the function.
+
+        """
+        if not callable(func):
+            raise TypeError(f'First argument must be callable function, got {type(func)}')
+
+        if not isinstance(args, tuple):
+            raise TypeError(f'Second argument must be a tuple, got {type(args)}')
+
+        func = _rpartial(func, *args, **kwargs)
+        return type(self)(datasets=toolz.valmap(func, self.datasets))
