@@ -165,9 +165,12 @@ class Collection(MutableMapping):
         func = _rpartial(func, *args, **kwargs)
         return type(self)(datasets=toolz.valmap(func, self.datasets))
 
-    def weighted(self, *args, **kwargs) -> 'Collection':
-        return xcollection.Collection([ds.weighted(*args, **kwargs) for ds in self.datasets])
-        # Do we need a typing for a collection of weighted objects, so that weighted.mean() necessitates the input is weighted?
-
-    def mean(self, *args, **kwargs) -> 'Collection':)
-        return xcollection.Collection([ds.mean(*args, **kwargs) for ds in self.datasets])
+    def weight_collection(self, *args, **kwargs) -> 'Collection':
+        return xcollection.CollectionWeighted({key: ds.weighted(*args, **kwargs) for key, ds in self.items()})
+        
+        
+# Do we need a typing for a collection of weighted objects, so that weighted.mean() necessitates the input is weighted?
+class CollectionWeighted(Collection):
+    
+        #def mean(self, *args, **kwargs) -> 'Collection':)
+    #    return xcollection.Collection([ds.mean(*args, **kwargs) for ds in self.datasets])
