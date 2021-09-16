@@ -1,6 +1,8 @@
 import typing
 from collections.abc import MutableMapping
 
+import matplotlib
+from matplotlib import pyplot as plt
 import pydantic
 import toolz
 import xarray as xr
@@ -19,8 +21,8 @@ def _rpartial(func, *args, **kwargs):
 
 
 def _validate_input(value):
-    if not isinstance(value, (xr.Dataset, xr.DataArray)):
-        raise TypeError(f'Expected an xarray.Dataset or xarray.DataArray, got {type(value)}')
+    if not isinstance(value, (xr.Dataset, xr.DataArray, matplotlib.figure.Figure)):
+        raise TypeError(f'Expected an xarray.Dataset, xarray.DataArray, or matplotlib type, got {type(value)}')
     if isinstance(value, xr.DataArray):
         return value.to_dataset()
     return value
@@ -33,7 +35,12 @@ class Config:
 
 @pydantic.dataclasses.dataclass(config=Config)
 class Collection(MutableMapping):
-    datasets: typing.Dict[pydantic.StrictStr, typing.Union[xr.Dataset, xr.DataArray]] = None
+    datasets: typing.Dict[pydantic.StrictStr,
+                          typing.Union[xr.Dataset,
+                                       xr.DataArray,
+                                       matplotlib.figure.Figure,
+                                      ]
+                         ] = None
 
     @pydantic.validator('datasets', pre=True, each_item=True)
     def _validate_datasets(cls, value):
@@ -164,3 +171,22 @@ class Collection(MutableMapping):
 
         func = _rpartial(func, *args, **kwargs)
         return type(self)(datasets=toolz.valmap(func, self.datasets))
+
+    def plot(
+        self,
+        var: str,
+        isel_dict: typing.Dict[str, int] = {},
+        *args: typing.Sequence[typing.Any],
+        **kwargs: typing.Dict[str, typing.Any],
+    ):
+        return_dict = {}
+        for key, ds in self.items():
+            # Don't want Figures to cause problems
+            # (Note that DataArrays are converted to Datasets when added to collection)
+            if type(ds) == xr.Dataset and var in ds.variables:
+                fig = plt.figure()
+                axes = fig.add_subplot()
+                ds[var].isel(isel_dict).plot(ax=axes, *args, **kwargs)
+                return_dict[key] = fig
+                print(type(return_dict[key]))
+        return Collection(return_dict)
