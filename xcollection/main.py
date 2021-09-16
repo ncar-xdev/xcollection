@@ -1,7 +1,6 @@
 import typing
 from collections.abc import MutableMapping
 
-import matplotlib
 import pydantic
 import toolz
 import xarray as xr
@@ -21,10 +20,8 @@ def _rpartial(func, *args, **kwargs):
 
 
 def _validate_input(value):
-    if not isinstance(value, (xr.Dataset, xr.DataArray, matplotlib.figure.Figure)):
-        raise TypeError(
-            f'Expected an xarray.Dataset, xarray.DataArray, or matplotlib type, got {type(value)}'
-        )
+    if not isinstance(value, (xr.Dataset, xr.DataArray)):
+        raise TypeError(f'Expected an xarray.Dataset or xarray.DataArray, got {type(value)}')
     if isinstance(value, xr.DataArray):
         return value.to_dataset()
     return value
@@ -37,14 +34,7 @@ class Config:
 
 @pydantic.dataclasses.dataclass(config=Config)
 class Collection(MutableMapping):
-    datasets: typing.Dict[
-        pydantic.StrictStr,
-        typing.Union[
-            xr.Dataset,
-            xr.DataArray,
-            matplotlib.figure.Figure,
-        ],
-    ] = None
+    datasets: typing.Dict[pydantic.StrictStr, typing.Union[xr.Dataset, xr.DataArray]] = None
 
     @pydantic.validator('datasets', pre=True, each_item=True)
     def _validate_datasets(cls, value):
@@ -193,4 +183,4 @@ class Collection(MutableMapping):
                 ds[var].isel(isel_dict).plot(ax=axes, *args, **kwargs)
                 return_dict[key] = fig
                 print(type(return_dict[key]))
-        return Collection(return_dict)
+        return return_dict
