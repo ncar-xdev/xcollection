@@ -19,7 +19,15 @@ def _rpartial(func, *args, **kwargs):
 
 
 def _validate_input(value):
-    if not isinstance(value, (xr.Dataset, xr.DataArray, xr.core.weighted.DatasetWeighted)):
+    if not isinstance(
+        value,
+        (
+            xr.Dataset,
+            xr.DataArray,
+            xr.core.weighted.DataArrayWeighted,
+            xr.core.weighted.DatasetWeighted,
+        ),
+    ):
         raise TypeError(f'Expected an xarray.Dataset or xarray.DataArray, got {type(value)}')
     if isinstance(value, xr.DataArray):
         return value.to_dataset()
@@ -33,7 +41,7 @@ class Config:
 
 @pydantic.dataclasses.dataclass(config=Config)
 class Collection(MutableMapping):
-    datasets: typing.Dict[pydantic.StrictStr, typing.Union[xr.Dataset, xr.DataArray, xr.core.weighted.DatasetWeighted]] = None
+    datasets: typing.Dict[pydantic.StrictStr, typing.Union[xr.Dataset, xr.DataArray]] = None
 
     @pydantic.validator('datasets', pre=True, each_item=True)
     def _validate_datasets(cls, value):
@@ -166,16 +174,20 @@ class Collection(MutableMapping):
         return type(self)(datasets=toolz.valmap(func, self.datasets))
 
     def weight_collection(self, *args, **kwargs) -> 'Collection':
-        return xcollection.CollectionWeighted({key: ds.weighted(*args, **kwargs) for key, ds in self.items()})
-        
+        return CollectionWeighted({key: ds.weighted(*args, **kwargs) for key, ds in self.items()})
+
 
 class CollectionWeighted(Collection):
-    
-    def mean(self, *args, **kwargs) -> 'CollectionWeighted':)
-        return xcollection.Collection({key: dsw.mean(*args, **kwargs) for key, dsw in self.items())
-                                       
-    def sum(self, *args, **kwargs) -> 'CollectionWeighted':)
-        return xcollection.Collection({key: dsw.sum(*args, **kwargs) for key, dsw in self.items())
-                                       
-    def sum_of_weights(self, *args, **kwargs) -> 'CollectionWeighted':)
-        return xcollection.Collection({key: dsw.sum_of_weights(*args, **kwargs) for key, dsw in self.items())
+    datasets: typing.Dict[
+        pydantic.StrictStr,
+        typing.Union[xr.core.weighted.DataArrayWeighted, xr.core.weighted.DatasetWeighted],
+    ] = None
+
+    def mean(self, *args, **kwargs) -> 'CollectionWeighted':
+        return Collection({key: dsw.mean(*args, **kwargs) for key, dsw in self.items()})
+
+    def sum(self, *args, **kwargs) -> 'CollectionWeighted':
+        return Collection({key: dsw.sum(*args, **kwargs) for key, dsw in self.items()})
+
+    def sum_of_weights(self, *args, **kwargs) -> 'CollectionWeighted':
+        return Collection({key: dsw.sum_of_weights(*args, **kwargs) for key, dsw in self.items()})
