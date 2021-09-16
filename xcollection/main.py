@@ -2,10 +2,10 @@ import typing
 from collections.abc import MutableMapping
 
 import matplotlib
-from matplotlib import pyplot as plt
 import pydantic
 import toolz
 import xarray as xr
+from matplotlib import pyplot as plt
 
 
 def _rpartial(func, *args, **kwargs):
@@ -22,7 +22,9 @@ def _rpartial(func, *args, **kwargs):
 
 def _validate_input(value):
     if not isinstance(value, (xr.Dataset, xr.DataArray, matplotlib.figure.Figure)):
-        raise TypeError(f'Expected an xarray.Dataset, xarray.DataArray, or matplotlib type, got {type(value)}')
+        raise TypeError(
+            f'Expected an xarray.Dataset, xarray.DataArray, or matplotlib type, got {type(value)}'
+        )
     if isinstance(value, xr.DataArray):
         return value.to_dataset()
     return value
@@ -35,12 +37,14 @@ class Config:
 
 @pydantic.dataclasses.dataclass(config=Config)
 class Collection(MutableMapping):
-    datasets: typing.Dict[pydantic.StrictStr,
-                          typing.Union[xr.Dataset,
-                                       xr.DataArray,
-                                       matplotlib.figure.Figure,
-                                      ]
-                         ] = None
+    datasets: typing.Dict[
+        pydantic.StrictStr,
+        typing.Union[
+            xr.Dataset,
+            xr.DataArray,
+            matplotlib.figure.Figure,
+        ],
+    ] = None
 
     @pydantic.validator('datasets', pre=True, each_item=True)
     def _validate_datasets(cls, value):
