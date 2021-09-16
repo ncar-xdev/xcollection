@@ -167,15 +167,15 @@ class Collection(MutableMapping):
 
     def weight_collection(self, *args, **kwargs) -> 'Collection':
         return xcollection.CollectionWeighted({key: ds.weighted(*args, **kwargs) for key, ds in self.items()})
-        
+
 
 class CollectionWeighted(Collection):
-    
+
     def mean(self, *args, **kwargs) -> 'CollectionWeighted':)
         return xcollection.Collection({key: dsw.mean(*args, **kwargs) for key, dsw in self.items())
-                                       
+
     def sum(self, *args, **kwargs) -> 'CollectionWeighted':)
         return xcollection.Collection({key: dsw.sum(*args, **kwargs) for key, dsw in self.items())
-                                       
+
     def sum_of_weights(self, *args, **kwargs) -> 'CollectionWeighted':)
         return xcollection.Collection({key: dsw.sum_of_weights(*args, **kwargs) for key, dsw in self.items())
