@@ -27,9 +27,16 @@ def _validate_input(value):
     return value
 
 
-def _make_plot(var, key, ds):
+def _make_plot(var, isel_dict, key, ds):
+    # Are all dims in isel_dict in ds?
+    if len(set(isel_dict.keys()) - set(ds.dims)) > 0:
+        return False
+
+    # Is ds a dataset? If so, does it contain var?
     if type(ds) == xr.Dataset:
         return var in ds.variables
+
+    # Is ds a DataArray? If so, is its name var?
     if type(ds) == xr.DataArray:
         return var == ds.name
     return False
@@ -208,11 +215,11 @@ class Collection(MutableMapping):
 
         return_dict = {}
         for key, data in self.items():
-            if _make_plot(var, key, data):
+            if _make_plot(var, isel_dict, key, data):
                 fig = plt.figure(figsize=figsize)
                 axes = fig.add_subplot()
                 if type(data) == xr.Dataset:
-                    data[var].isel(isel_dict).plot(ax=axes, *args, **kwargs)
+                    data.isel(isel_dict)[var].plot(ax=axes, *args, **kwargs)
                 if type(data) == xr.DataArray:
                     data.isel(isel_dict).plot(ax=axes, *args, **kwargs)
                 return_dict[key] = fig
