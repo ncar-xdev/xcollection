@@ -130,7 +130,7 @@ def test_weighted():
     weights = np.cos(np.deg2rad(ds.Tair))
     weights.name = 'weights'
 
-    collection_weighted = CollectionWeighted(collection, weights.fillna(0))
+    collection_weighted = xcollection.CollectionWeighted(collection, weights.fillna(0))
     collection_dict = {
         'mean': collection_weighted.mean(dim='time'),
         'sum': collection_weighted.sum(dim='time'),
