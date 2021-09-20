@@ -1,6 +1,6 @@
 import typing
 from collections.abc import MutableMapping
-from typing import Hashable, Optional, Union, Iterable
+from typing import Hashable, Iterable, Optional, Union
 
 import pydantic
 import toolz
