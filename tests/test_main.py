@@ -128,8 +128,10 @@ def test_weighted(datasets):
     ds_dict = datasets
     collection = xcollection.Collection(ds_dict)
 
-    for k in datasets:
-    weights = np.cos(ds_dict['foo'].Tair)
+    # Getting any data variable from dataset
+    a = list(ds_dict.keys())[0]
+    b = list(ds_dict[a].data_vars)[0]
+    weights = ds_dict[a][b]
     weights.name = 'weights'
 
     collection_weighted = xcollection.CollectionWeighted(collection, weights.fillna(0))
