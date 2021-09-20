@@ -196,7 +196,7 @@ class CollectionWeighted(Weighted['Collection']):
 
     def _implementation(self, func, dim, **kwargs) -> 'Collection':
 
-        dataset._check_dim(dim)
+        self._check_dim(dim)
 
         dataset_dict = {}
         for key, dataset in self.obj.items():
