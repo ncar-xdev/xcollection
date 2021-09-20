@@ -1,6 +1,5 @@
 import typing
 
-import numpy as np
 import pydantic
 import pytest
 import xarray as xr
