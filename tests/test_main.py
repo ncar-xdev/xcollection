@@ -148,5 +148,6 @@ def test_weighted():
 
     for k in collection_dict:
         for j, ds in collection_dict[k].items():
-            assert type(ds) == type(dict_dict[k][j])
+            assert isinstance(ds, xr.Dataset)
+            assert isinstance(dict_dict[k][j], xr.Dataset)
             assert ds == dict_dict[k][j]
