@@ -121,23 +121,29 @@ def test_map_type_error():
     with pytest.raises(TypeError):
         c.map(lambda x: x, args=('foo'))
 
-        
+
 def test_weighted():
     ds_dict = {'foo': ds, 'bar': dsa}
     collection = xcollection.Collection(ds_dict)
 
     weights = np.cos(np.deg2rad(ds.Tair))
-    weights.name = "weights"
+    weights.name = 'weights'
 
     collection_weighted = CollectionWeighted(collection, weights.fillna(0))
-    collection_dict = {"mean":collection_weighted.mean(dim="time"), 
-                       "sum":collection_weighted.sum(dim="time"), 
-                       "sum_of_weights":collection_weighted.sum_of_weights(dim="time")}
+    collection_dict = {
+        'mean': collection_weighted.mean(dim='time'),
+        'sum': collection_weighted.sum(dim='time'),
+        'sum_of_weights': collection_weighted.sum_of_weights(dim='time'),
+    }
 
     dict_weighted = {key: ds_dict[key].weighted(weights.fillna(0)) for key in ds_dict}
-    dict_dict = {"mean":{key: dict_weighted[key].mean(dim="time") for key in dict_weighted},
-                 "sum":{key: dict_weighted[key].sum(dim="time") for key in dict_weighted},
-                 "sum_of_weights":{key: dict_weighted[key].sum_of_weights(dim="time") for key in dict_weighted}}
+    dict_dict = {
+        'mean': {key: dict_weighted[key].mean(dim='time') for key in dict_weighted},
+        'sum': {key: dict_weighted[key].sum(dim='time') for key in dict_weighted},
+        'sum_of_weights': {
+            key: dict_weighted[key].sum_of_weights(dim='time') for key in dict_weighted
+        },
+    }
 
     for k in collection_dict:
         for j, ds in collection_dict[k].items():
