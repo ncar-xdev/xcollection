@@ -1,11 +1,11 @@
 import typing
 from collections.abc import MutableMapping
+from typing import Hashable, Optional, Union
 
 import pydantic
 import toolz
 import xarray as xr
 from xarray.core.weighted import Weighted
-from typing import Optional, Union, Hashable
 
 
 def _rpartial(func, *args, **kwargs):
@@ -178,12 +178,12 @@ class Collection(MutableMapping):
     def weighted(self, *args, **kwargs) -> 'Collection':
         return CollectionWeighted({key: ds.weighted(*args, **kwargs) for key, ds in self.items()})
 
-    
+
 class CollectionWeighted(Weighted["Collection"]):
-    
+
     def _check_dim(self, dim: Optional[Union[Hashable, Iterable[Hashable]]]):
         """raise an error if any dimension is missing"""
-        
+
         for key, dataset in self.obj.items():
             if isinstance(dim, str) or not isinstance(dim, Iterable):
                 dims = [dim] if dim else []
@@ -194,14 +194,14 @@ class CollectionWeighted(Weighted["Collection"]):
                 raise ValueError(
                     f"{dataset.__class__.__name__} does not contain the dimensions: {missing_dims}"
                 )
-            
+
     def _implementation(self, func, dim, **kwargs) -> "Collection":
 
          dataset._check_dim(dim)
-            
+
         dataset_dict = {}
         for key, dataset in self.obj.items():
-            
+
             dataset = dataset.map(func, dim=dim, **kwargs)
             dataset_dict[key] = dataset
         return Collection(dataset_dict)
