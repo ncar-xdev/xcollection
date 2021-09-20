@@ -4,6 +4,8 @@ from collections.abc import MutableMapping
 import pydantic
 import toolz
 import xarray as xr
+from xarray.core.weighted import Weighted
+from typing import Optional, Union, Hashable
 
 
 def _rpartial(func, *args, **kwargs):
@@ -173,21 +175,33 @@ class Collection(MutableMapping):
         func = _rpartial(func, *args, **kwargs)
         return type(self)(datasets=toolz.valmap(func, self.datasets))
 
-    def weight_collection(self, *args, **kwargs) -> 'Collection':
+    def weighted(self, *args, **kwargs) -> 'Collection':
         return CollectionWeighted({key: ds.weighted(*args, **kwargs) for key, ds in self.items()})
 
+    
+class CollectionWeighted(Weighted["Collection"]):
+    
+    def _check_dim(self, dim: Optional[Union[Hashable, Iterable[Hashable]]]):
+        """raise an error if any dimension is missing"""
+        
+        for key, dataset in self.obj.items():
+            if isinstance(dim, str) or not isinstance(dim, Iterable):
+                dims = [dim] if dim else []
+            else:
+                dims = list(dim)
+            missing_dims = set(dims) - set(dataset.dims) - set(self.weights.dims)
+            if missing_dims:
+                raise ValueError(
+                    f"{dataset.__class__.__name__} does not contain the dimensions: {missing_dims}"
+                )
+            
+    def _implementation(self, func, dim, **kwargs) -> "Collection":
 
-class CollectionWeighted(Collection):
-    datasets: typing.Dict[
-        pydantic.StrictStr,
-        typing.Union[xr.core.weighted.DataArrayWeighted, xr.core.weighted.DatasetWeighted],
-    ] = None
-
-    def mean(self, *args, **kwargs) -> 'CollectionWeighted':
-        return Collection({key: dsw.mean(*args, **kwargs) for key, dsw in self.items()})
-
-    def sum(self, *args, **kwargs) -> 'CollectionWeighted':
-        return Collection({key: dsw.sum(*args, **kwargs) for key, dsw in self.items()})
-
-    def sum_of_weights(self, *args, **kwargs) -> 'CollectionWeighted':
-        return Collection({key: dsw.sum_of_weights(*args, **kwargs) for key, dsw in self.items()})
+         dataset._check_dim(dim)
+            
+        dataset_dict = {}
+        for key, dataset in self.obj.items():
+            
+            dataset = dataset.map(func, dim=dim, **kwargs)
+            dataset_dict[key] = dataset
+        return Collection(dataset_dict)
