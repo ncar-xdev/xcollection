@@ -132,7 +132,7 @@ def test_weighted(datasets):
     weights = ds_dict[a][b]
     weights.name = 'weights'
 
-    collection_weighted = xcollection.CollectionWeighted(collection, weights.fillna(0))
+    collection_weighted = collection.weighted(weights.fillna(0))
     collection_dict = {
         'mean': collection_weighted.mean(dim='time'),
         'sum': collection_weighted.sum(dim='time'),
