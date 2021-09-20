@@ -179,8 +179,7 @@ class Collection(MutableMapping):
         return CollectionWeighted({key: ds.weighted(*args, **kwargs) for key, ds in self.items()})
 
 
-class CollectionWeighted(Weighted["Collection"]):
-
+class CollectionWeighted(Weighted['Collection']):
     def _check_dim(self, dim: Optional[Union[Hashable, Iterable[Hashable]]]):
         """raise an error if any dimension is missing"""
 
@@ -192,10 +191,10 @@ class CollectionWeighted(Weighted["Collection"]):
             missing_dims = set(dims) - set(dataset.dims) - set(self.weights.dims)
             if missing_dims:
                 raise ValueError(
-                    f"{dataset.__class__.__name__} does not contain the dimensions: {missing_dims}"
+                    f'{dataset.__class__.__name__} does not contain the dimensions: {missing_dims}'
                 )
 
-    def _implementation(self, func, dim, **kwargs) -> "Collection":
+    def _implementation(self, func, dim, **kwargs) -> 'Collection':
 
         dataset._check_dim(dim)
 
