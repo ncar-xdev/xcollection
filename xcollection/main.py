@@ -175,8 +175,8 @@ class Collection(MutableMapping):
         func = _rpartial(func, *args, **kwargs)
         return type(self)(datasets=toolz.valmap(func, self.datasets))
 
-    def weighted(self, *args, **kwargs) -> 'Collection':
-        return CollectionWeighted({key: ds.weighted(*args, **kwargs) for key, ds in self.items()})
+    def weighted(self, weights, **kwargs) -> 'Collection':
+        return CollectionWeighted(self, weights, *kwargs)
 
 
 class CollectionWeighted(Weighted['Collection']):

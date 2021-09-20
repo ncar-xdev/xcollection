@@ -129,17 +129,17 @@ def test_weighted(datasets):
 
     a = list(ds_dict.keys())[0]
     b = list(ds_dict[a].data_vars)[0]
-    weights = ds_dict[a][b]
+    weights = ds_dict[a][b].fillna(0)
     weights.name = 'weights'
 
-    collection_weighted = collection.weighted(weights=weights.fillna(0))
+    collection_weighted = collection.weighted(weights)
     collection_dict = {
         'mean': collection_weighted.mean(dim='time'),
         'sum': collection_weighted.sum(dim='time'),
         'sum_of_weights': collection_weighted.sum_of_weights(dim='time'),
     }
 
-    dict_weighted = {key: ds_dict[key].weighted(weights.fillna(0)) for key in ds_dict}
+    dict_weighted = {key: ds_dict[key].weighted(weights) for key in ds_dict}
     dict_dict = {
         'mean': {key: dict_weighted[key].mean(dim='time') for key in dict_weighted},
         'sum': {key: dict_weighted[key].sum(dim='time') for key in dict_weighted},
