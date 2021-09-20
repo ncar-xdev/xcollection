@@ -123,8 +123,9 @@ def test_map_type_error():
         c.map(lambda x: x, args=('foo'))
 
 
-def test_weighted():
-    ds_dict = {'foo': ds, 'bar': dsa}
+@pytest.mark.parametrize('datasets', [None, {'foo': ds, 'bar': dsa}, {'test': ds.Tair}])
+def test_weighted(datasets):
+    ds_dict = datasets
     collection = xcollection.Collection(ds_dict)
 
     weights = np.cos(np.deg2rad(ds.Tair))
