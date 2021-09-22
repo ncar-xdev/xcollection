@@ -222,5 +222,5 @@ class Collection(MutableMapping):
                     data.isel(isel_dict)[var].plot(ax=axes, *args, **kwargs)
                 if type(data) == xr.DataArray:
                     data.isel(isel_dict).plot(ax=axes, *args, **kwargs)
-                return_dict[key] = fig
+                return_dict[key] = (fig, axes)
         return return_dict
