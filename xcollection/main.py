@@ -142,6 +142,24 @@ class Collection(MutableMapping):
 
         return type(self)(datasets=result)
 
+    def keymap(self, func: typing.Callable[[str], str]) -> 'Collection':
+        """Apply a function to each key in the collection.
+        Parameters
+        ----------
+        func : callable
+            The function to apply to each key.
+
+        Returns
+        -------
+        Collection
+            A new collection containing the results of the function.
+
+        """
+        if not callable(func):
+            raise TypeError(f'First argument must be callable function, got {type(func)}')
+
+        return type(self)(datasets=toolz.keymap(func, self.datasets))
+
     def map(
         self,
         func: typing.Callable[[xr.Dataset], xr.Dataset],

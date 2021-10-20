@@ -113,6 +113,15 @@ def test_map(dim, attrs):
     xr.testing.assert_identical(d['foo'], func(dsa, 'air', attrs=attrs, dim=dim).to_dataset())
 
 
+def test_keymap():
+    c = xcollection.Collection({'foo': ds, 'bar': ds})
+    d = c.keymap(lambda k: k.upper())
+    assert set(d.keys()) == {'FOO', 'BAR'}
+
+    with pytest.raises(TypeError):
+        c.keymap('TEST')
+
+
 def test_map_type_error():
     c = xcollection.Collection()
     with pytest.raises(TypeError):
