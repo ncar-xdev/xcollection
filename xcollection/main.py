@@ -4,6 +4,7 @@ from collections.abc import MutableMapping
 import pydantic
 import toolz
 import xarray as xr
+from matplotlib import pyplot as plt
 
 
 def _rpartial(func, *args, **kwargs):
@@ -24,6 +25,21 @@ def _validate_input(value):
     if isinstance(value, xr.DataArray):
         return value.to_dataset()
     return value
+
+
+def _make_plot(var, isel_dict, key, ds):
+    # Are all dims in isel_dict in ds?
+    if len(set(isel_dict.keys()) - set(ds.dims)) > 0:
+        return False
+
+    # Is ds a dataset? If so, does it contain var?
+    if type(ds) == xr.Dataset:
+        return var in ds.variables
+
+    # Is ds a DataArray? If so, is its name var?
+    if type(ds) == xr.DataArray:
+        return var == ds.name
+    return False
 
 
 class Config:
@@ -182,3 +198,47 @@ class Collection(MutableMapping):
 
         func = _rpartial(func, *args, **kwargs)
         return type(self)(datasets=toolz.valmap(func, self.datasets))
+
+    def plot(
+        self,
+        var: typing.Union[str, list],
+        isel_dict: typing.Dict[str, int] = {},
+        figsize: typing.Union[list, tuple] = None,
+        *args: typing.Sequence[typing.Any],
+        **kwargs: typing.Dict[str, typing.Any],
+    ):
+        """For each Dataset that contains {var}, plot ds[var].isel(isel_dict)
+           For each DataArray for {var}, plot da.isel(isel_dict)
+
+        Parameters
+        ----------
+        var : string or list
+            Name of variable to plot
+        isel_dict : dict
+            Arguments to pass to Dataset.isel() or DataArray.isel()
+            (Will be deprecated when Collections.isel() exists)
+        figsize : list or tuple
+            Argument will be passed to plt.figure()
+        args
+            Positional arguments to pass data.plot()
+        kwargs
+            Additional keyword arguments to pass as keywords arguments to data.plot()
+
+        Returns
+        -------
+        dict
+            A dictionary {key: fig}
+            For each key in Collection that contains var, fig = ds[var].plot()
+        """
+
+        return_dict = {}
+        for key, data in self.items():
+            if _make_plot(var, isel_dict, key, data):
+                fig = plt.figure(figsize=figsize)
+                axes = fig.add_subplot()
+                if type(data) == xr.Dataset:
+                    data.isel(isel_dict)[var].plot(ax=axes, *args, **kwargs)
+                if type(data) == xr.DataArray:
+                    data.isel(isel_dict).plot(ax=axes, *args, **kwargs)
+                return_dict[key] = (fig, axes)
+        return return_dict
