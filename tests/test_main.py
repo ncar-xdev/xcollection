@@ -129,3 +129,36 @@ def test_map_type_error():
 
     with pytest.raises(TypeError):
         c.map(lambda x: x, args=('foo'))
+
+
+@pytest.mark.parametrize('datasets', [{'foo': ds, 'bar': dsa}])
+def test_weighted(datasets):
+    ds_dict = datasets
+    collection = xcollection.Collection(ds_dict)
+
+    a = list(ds_dict.keys())[0]
+    b = list(ds_dict[a].data_vars)[0]
+    weights = ds_dict[a][b].fillna(0)
+    weights.name = 'weights'
+
+    collection_weighted = collection.weighted(weights)
+    collection_dict = {
+        'mean': collection_weighted.mean(dim='time'),
+        'sum': collection_weighted.sum(dim='time'),
+        'sum_of_weights': collection_weighted.sum_of_weights(dim='time'),
+    }
+
+    dict_weighted = {key: ds_dict[key].weighted(weights) for key in ds_dict}
+    dict_dict = {
+        'mean': {key: dict_weighted[key].mean(dim='time') for key in dict_weighted},
+        'sum': {key: dict_weighted[key].sum(dim='time') for key in dict_weighted},
+        'sum_of_weights': {
+            key: dict_weighted[key].sum_of_weights(dim='time') for key in dict_weighted
+        },
+    }
+
+    for k in collection_dict:
+        for j, ds in collection_dict[k].items():
+            assert isinstance(ds, xr.Dataset)
+            assert isinstance(dict_dict[k][j], xr.Dataset)
+            assert ds == dict_dict[k][j]

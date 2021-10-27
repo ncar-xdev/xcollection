@@ -1,9 +1,11 @@
 import typing
 from collections.abc import MutableMapping
+from typing import Hashable, Iterable, Optional, Union
 
 import pydantic
 import toolz
 import xarray as xr
+from xarray.core.weighted import Weighted
 
 
 def _rpartial(func, *args, **kwargs):
@@ -19,7 +21,15 @@ def _rpartial(func, *args, **kwargs):
 
 
 def _validate_input(value):
-    if not isinstance(value, (xr.Dataset, xr.DataArray)):
+    if not isinstance(
+        value,
+        (
+            xr.Dataset,
+            xr.DataArray,
+            xr.core.weighted.DataArrayWeighted,
+            xr.core.weighted.DatasetWeighted,
+        ),
+    ):
         raise TypeError(f'Expected an xarray.Dataset or xarray.DataArray, got {type(value)}')
     if isinstance(value, xr.DataArray):
         return value.to_dataset()
@@ -182,3 +192,33 @@ class Collection(MutableMapping):
 
         func = _rpartial(func, *args, **kwargs)
         return type(self)(datasets=toolz.valmap(func, self.datasets))
+
+    def weighted(self, weights, **kwargs) -> 'Collection':
+        return CollectionWeighted(self, weights, *kwargs)
+
+
+class CollectionWeighted(Weighted['Collection']):
+    def _check_dim(self, dim: Optional[Union[Hashable, Iterable[Hashable]]]):
+        """raise an error if any dimension is missing"""
+
+        for key, dataset in self.obj.items():
+            if isinstance(dim, str) or not isinstance(dim, Iterable):
+                dims = [dim] if dim else []
+            else:
+                dims = list(dim)
+            missing_dims = set(dims) - set(dataset.dims) - set(self.weights.dims)
+            if missing_dims:
+                raise ValueError(
+                    f'{dataset.__class__.__name__} does not contain the dimensions: {missing_dims}'
+                )
+
+    def _implementation(self, func, dim, **kwargs) -> 'Collection':
+
+        self._check_dim(dim)
+
+        dataset_dict = {}
+        for key, dataset in self.obj.items():
+
+            dataset = dataset.map(func, dim=dim, **kwargs)
+            dataset_dict[key] = dataset
+        return Collection(dataset_dict)
