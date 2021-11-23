@@ -193,6 +193,19 @@ class Collection(MutableMapping):
         func = _rpartial(func, *args, **kwargs)
         return type(self)(datasets=toolz.valmap(func, self.datasets))
 
+    def save(self, group_path=str, format='zarr'):
+
+        for key, dataset in self.items():
+
+            if format == 'zarr':
+                dataset.to_zarr(f'{group_path}/{key}.zarr', mode='w')
+
+            elif format == 'nc':
+                dataset.to_netcdf(f'{group_path}/{key}.nc', mode='w')
+
+            else:
+                raise (f'Format {format} not supported - use either zarr or netcdf (nc)')
+
     def weighted(self, weights, **kwargs) -> 'Collection':
         return CollectionWeighted(self, weights, *kwargs)
 

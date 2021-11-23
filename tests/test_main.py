@@ -1,3 +1,5 @@
+import glob
+import os
 import typing
 
 import pydantic
@@ -129,6 +131,24 @@ def test_map_type_error():
 
     with pytest.raises(TypeError):
         c.map(lambda x: x, args=('foo'))
+
+
+def test_save_zarr():
+    c = xcollection.Collection({'foo': ds, 'bar': ds})
+    current_dir = os.getcwd()
+    c.save(current_dir, format='zarr')
+    files = glob.glob(f'{current_dir}/*.zarr')
+    assert f'{current_dir}/foo.zarr' in files
+    assert f'{current_dir}/bar.zarr' in files
+
+
+def test_save_netcdf():
+    c = xcollection.Collection({'foo': ds, 'bar': ds})
+    current_dir = os.getcwd()
+    c.save(current_dir, format='nc')
+    files = glob.glob(f'{current_dir}/*.nc')
+    assert f'{current_dir}/foo.nc' in files
+    assert f'{current_dir}/bar.nc' in files
 
 
 @pytest.mark.parametrize('datasets', [{'foo': ds, 'bar': dsa}])
