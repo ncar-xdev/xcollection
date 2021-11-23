@@ -3,6 +3,7 @@
 """ Top-level module for xcollection. """
 from pkg_resources import DistributionNotFound, get_distribution
 
+from .io import read_collection
 from .main import Collection
 
 try:
