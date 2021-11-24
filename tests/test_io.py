@@ -13,7 +13,7 @@ def test_read_zarr():
     group_path = f'{current_dir}/test_dir'
     if not os.path.isdir(group_path):
         os.makedirs(group_path)
-    c.save(group_path, format='zarr')
+    c.to_zarr(group_path)
     new_c = xcollection.read_collection(group_path, engine='zarr')
     assert isinstance(new_c, xcollection.Collection)
     assert 'foo' in new_c.keys()
@@ -25,7 +25,7 @@ def test_read_netcdf():
     group_path = f'{current_dir}/test_dir'
     if not os.path.isdir(group_path):
         os.makedirs(group_path)
-    c.save(group_path, format='nc')
+    c.to_netcdf(group_path)
     new_c = xcollection.read_collection(group_path, engine='netcdf4')
     assert isinstance(new_c, xcollection.Collection)
     assert 'foo' in new_c.keys()

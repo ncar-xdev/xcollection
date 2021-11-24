@@ -1,3 +1,4 @@
+import json
 import typing
 from collections.abc import MutableMapping
 from typing import Hashable, Iterable, Optional, Union
@@ -193,18 +194,62 @@ class Collection(MutableMapping):
         func = _rpartial(func, *args, **kwargs)
         return type(self)(datasets=toolz.valmap(func, self.datasets))
 
-    def save(self, group_path=str, format='zarr'):
+    def _write_metadata(self, directory, file_extension):
+        file_list = [f'{directory}/{key}{file_extension}' for key in self.keys()]
+        with open(f'{directory}/.xcollection.json', 'w') as f:
+            json.dump({'file_list': file_list, 'file_extension': file_extension}, f)
 
-        for key, dataset in self.items():
+    def to_zarr(self, directory, mode: str = 'w', **kwargs):
+        """Write the collection to a Zarr store.
+        Parameters
+        ----------
+        directory : str or pathlib.Path
+            The directory to write the Zarr store to.
+        kwargs
+            Additional keyword arguments to pass to `xr.Dataset.to_zarr`.
 
-            if format == 'zarr':
-                dataset.to_zarr(f'{group_path}/{key}.zarr', mode='w')
+        Returns
+        -------
+        None
 
-            elif format == 'nc':
-                dataset.to_netcdf(f'{group_path}/{key}.nc', mode='w')
+        """
+        if not isinstance(directory, str):
+            raise TypeError(f'First argument must be a string, got {type(directory)}')
 
-            else:
-                raise (f'Format {format} not supported - use either zarr or netcdf (nc)')
+        # write the metadata file
+        self._write_metadata(directory, file_extension='.zarr')
+
+        return [
+            value.to_zarr(f'{directory}/{key}.zarr', mode=mode, **kwargs)
+            for key, value in self.items()
+        ]
+
+    def to_netcdf(self, directory, *, mode: str = 'w', **kwargs):
+        """Write the collection to a directory of NetCDF file.
+        Parameters
+        ----------
+        directory : str or pathlib.Path
+            The directory to write the NetCDF file to.
+        mode : str, optional
+            The file mode to use when opening the file. Defaults to 'w'.
+        kwargs
+            Additional keyword arguments to pass to `xr.Dataset.to_netcdf`.
+
+        Returns
+        -------
+        None
+
+        """
+        if not isinstance(directory, str):
+            raise TypeError(f'First argument must be a string, got {type(directory)}')
+
+        # Write the metadata file
+        self._write_metadata(directory, file_extension='.nc')
+
+        return [
+            value.to_netcdf(f'{directory}/{key}.nc', mode=mode, **kwargs)
+            for key, value in self.items()
+        ]
 
     def weighted(self, weights, **kwargs) -> 'Collection':
         return CollectionWeighted(self, weights, *kwargs)

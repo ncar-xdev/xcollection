@@ -136,7 +136,7 @@ def test_map_type_error():
 def test_save_zarr():
     c = xcollection.Collection({'foo': ds, 'bar': ds})
     current_dir = os.getcwd()
-    c.save(current_dir, format='zarr')
+    c.to_zarr(current_dir)
     files = glob.glob(f'{current_dir}/*.zarr')
     assert f'{current_dir}/foo.zarr' in files
     assert f'{current_dir}/bar.zarr' in files
@@ -145,7 +145,7 @@ def test_save_zarr():
 def test_save_netcdf():
     c = xcollection.Collection({'foo': ds, 'bar': ds})
     current_dir = os.getcwd()
-    c.save(current_dir, format='nc')
+    c.to_netcdf(current_dir)
     files = glob.glob(f'{current_dir}/*.nc')
     assert f'{current_dir}/foo.nc' in files
     assert f'{current_dir}/bar.nc' in files
