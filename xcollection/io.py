@@ -7,7 +7,7 @@ import xarray as xr
 from .main import Collection
 
 
-def read_collection(group_path, engine=None):
+def open_collection(group_path, engine=None, **kwargs):
     collection_dict = dict()
 
     if os.path.exists(f'{group_path}/.xcollection.json'):
@@ -27,7 +27,7 @@ def read_collection(group_path, engine=None):
         raise ('File format not supported')
 
     for file in metadata_dict['file_list']:
-        ds = xr.open_dataset(file, engine=engine)
+        ds = xr.open_dataset(file, engine=engine, **kwargs)
         stem = pathlib.Path(file).stem
         collection_dict[stem] = ds
 
