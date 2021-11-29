@@ -95,18 +95,22 @@ class Collection(MutableMapping):
         display(HTML(self._repr_html_()))
 
     def keys(self) -> typing.Iterable[str]:
+        """Return the keys of the collection."""
         return self.datasets.keys()
 
     def values(self) -> typing.Iterable[xr.Dataset]:
+        """Return the values of the collection."""
         return self.datasets.values()
 
     def items(self) -> typing.Iterable[typing.Tuple[str, xr.Dataset]]:
+        """Return the items of the collection."""
         return self.datasets.items()
 
     def choose(
         self, data_vars: typing.Union[str, typing.List[str]], *, mode: str = 'any'
     ) -> 'Collection':
         """Return a collection with datasets containing all or any of the specified data variables.
+
         Parameters
         ----------
         data_vars : str or list of str
@@ -144,6 +148,7 @@ class Collection(MutableMapping):
 
     def keymap(self, func: typing.Callable[[str], str]) -> 'Collection':
         """Apply a function to each key in the collection.
+
         Parameters
         ----------
         func : callable
@@ -167,6 +172,7 @@ class Collection(MutableMapping):
         **kwargs: typing.Dict[str, typing.Any],
     ) -> 'Collection':
         """Apply a function to each dataset in the collection.
+
         Parameters
         ----------
         func : callable
@@ -195,6 +201,7 @@ class Collection(MutableMapping):
 
     def to_zarr(self, store, mode: str = 'w', **kwargs):
         """Write the collection to a Zarr store.
+
         Parameters
         ----------
         store : str or pathlib.Path
@@ -220,6 +227,7 @@ class Collection(MutableMapping):
         return [value.to_zarr(store, group=key, mode=mode, **kwargs) for key, value in self.items()]
 
     def weighted(self, weights, **kwargs) -> 'Collection':
+        """Return a collection with datasets weighted by the given weights."""
         return CollectionWeighted(self, weights, *kwargs)
 
 
@@ -252,6 +260,7 @@ class CollectionWeighted(Weighted['Collection']):
 
 def open_collection(store: typing.Union[str, pydantic.DirectoryPath], **kwargs):
     """Open a collection stored in a Zarr store.
+
     Parameters
     ----------
     store : str or pathlib.Path

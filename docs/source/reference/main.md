@@ -1,6 +1,9 @@
 # Collection
 
 ```{eval-rst}
-.. automodule:: xcollection.main
-   :members:
+.. autoclass:: xcollection.main.Collection
+    :members:
+    :noindex:
+
+.. autofunction:: xcollection.main.open_collection
 ```
