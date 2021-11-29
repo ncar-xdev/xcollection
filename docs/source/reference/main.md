@@ -1,6 +1,6 @@
 # Collection
 
 ```{eval-rst}
-.. automodule:: funnel.config
+.. automodule:: xcollection.main
    :members:
 ```
