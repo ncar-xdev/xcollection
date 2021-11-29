@@ -68,7 +68,6 @@ class Collection(MutableMapping):
     Dimensions without coordinates: y, x
     Data variables:
         Tair     (y, x) float64 ...
-
     🔑 bar
     <xarray.Dataset>
     Dimensions:  (time: 36, x: 275)
@@ -175,7 +174,6 @@ class Collection(MutableMapping):
         Dimensions without coordinates: y, x
         Data variables:
             Tair     (y, x) float64 ...
-
         🔑 bar
         <xarray.Dataset>
         Dimensions:  (time: 36, x: 275)
@@ -186,13 +184,11 @@ class Collection(MutableMapping):
         Dimensions without coordinates: x
         Data variables:
             Tair     (time, x) float64 ...
-
         🔑 baz
         <xarray.Dataset>
         Dimensions:  ()
         Data variables:
             *empty*
-
         >>> len(c)
         3
         >>> c.keys()
@@ -257,7 +253,6 @@ class Collection(MutableMapping):
         Dimensions without coordinates: y, x
         Data variables:
             Tair     (y, x) float64 ...
-
         🔑 bar
         <xarray.Dataset>
         Dimensions:  (time: 36, x: 275)
@@ -268,7 +263,6 @@ class Collection(MutableMapping):
         Dimensions without coordinates: x
         Data variables:
             Tair     (time, x) float64 ...
-
         >>> c.keys()
         dict_keys(['foo', 'bar'])
         >>> d = c.keymap(lambda x: x.upper())
@@ -319,7 +313,6 @@ class Collection(MutableMapping):
         Dimensions without coordinates: y, x
         Data variables:
             Tair     (y, x) float64 ...
-
         🔑 bar
         <xarray.Dataset>
         Dimensions:  (time: 36, x: 275)
@@ -330,7 +323,6 @@ class Collection(MutableMapping):
         Dimensions without coordinates: x
         Data variables:
             Tair     (time, x) float64 ...
-
         >>> c.map(func=lambda x: x.isel(x=slice(0, 10)))
         <Collection (2 keys)>
         🔑 foo
@@ -343,7 +335,6 @@ class Collection(MutableMapping):
         Dimensions without coordinates: y, x
         Data variables:
             Tair     (y, x) float64 ...
-
         🔑 bar
         <xarray.Dataset>
         Dimensions:  (time: 36, x: 10)
