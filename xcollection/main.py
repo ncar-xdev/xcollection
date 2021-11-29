@@ -193,16 +193,12 @@ class Collection(MutableMapping):
         3
         >>> c.keys()
         dict_keys(['foo', 'bar', 'baz'])
-        >>> d = c.choose(data_vars=['Tair'])
+        >>> d = c.choose(data_vars=['Tair'], mode='any')
         >>> len(d)
         2
         >>> d.keys()
         dict_keys(['foo', 'bar'])
         >>> d = c.choose(data_vars=['Tair'], mode='all')
-        File "/../../.../xcollection/xcollection/main.py", line 147, in _select_vars
-            self, data_vars: typing.Union[str, typing.List[str]], *, mode: str = 'any'
-        KeyError: "No data variables: `['Tair']` found in dataset: <xarray.Dataset>\nDimensions:  ()\nData variables:\n    *empty*"
-
         """
 
         _VALID_MODES = ['all', 'any']
