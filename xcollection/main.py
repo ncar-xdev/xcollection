@@ -1,4 +1,3 @@
-import json
 import typing
 from collections.abc import MutableMapping
 from typing import Hashable, Iterable, Optional, Union
@@ -193,11 +192,6 @@ class Collection(MutableMapping):
 
         func = _rpartial(func, *args, **kwargs)
         return type(self)(datasets=toolz.valmap(func, self.datasets))
-
-    def _write_metadata(self, directory, file_extension):
-        file_list = [f'{directory}/{key}{file_extension}' for key in self.keys()]
-        with open(f'{directory}/.xcollection.json', 'w') as f:
-            json.dump({'file_list': file_list, 'file_extension': file_extension}, f)
 
     def to_zarr(self, store, mode: str = 'w', **kwargs):
         """Write the collection to a Zarr store.
