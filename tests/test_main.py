@@ -1,10 +1,9 @@
-import glob
-import os
 import typing
 
 import pydantic
 import pytest
 import xarray as xr
+import zarr
 
 import xcollection
 
@@ -133,22 +132,16 @@ def test_map_type_error():
         c.map(lambda x: x, args=('foo'))
 
 
-def test_save_zarr():
-    c = xcollection.Collection({'foo': ds, 'bar': ds})
-    current_dir = os.getcwd()
-    c.to_zarr(current_dir)
-    files = glob.glob(f'{current_dir}/*.zarr')
-    assert f'{current_dir}/foo.zarr' in files
-    assert f'{current_dir}/bar.zarr' in files
+def test_to_zarr(tmp_path):
+    c = xcollection.Collection({'foo': ds.isel(time=0), 'bar': ds.isel(y=0)})
+    store = str(tmp_path / 'testing.zarr')
+    c.to_zarr(store)
 
+    zstore = zarr.open_group(store, mode='r')
+    assert set(zstore.group_keys()) == set(c.keys())
 
-def test_save_netcdf():
-    c = xcollection.Collection({'foo': ds, 'bar': ds})
-    current_dir = os.getcwd()
-    c.to_netcdf(current_dir)
-    files = glob.glob(f'{current_dir}/*.nc')
-    assert f'{current_dir}/foo.nc' in files
-    assert f'{current_dir}/bar.nc' in files
+    c2 = xcollection.open_collection(store)
+    assert c == c2
 
 
 @pytest.mark.parametrize('datasets', [{'foo': ds, 'bar': dsa}])
