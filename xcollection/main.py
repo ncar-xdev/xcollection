@@ -193,6 +193,32 @@ class Collection(MutableMapping):
         func = _rpartial(func, *args, **kwargs)
         return type(self)(datasets=toolz.valmap(func, self.datasets))
 
+    def to_zarr(self, store, mode: str = 'w', **kwargs):
+        """Write the collection to a Zarr store.
+        Parameters
+        ----------
+        store : str or pathlib.Path
+             Store or path to directory in local or remote file system.
+        mode : {"w", "w-", "a", "r+", None}, optional
+            Persistence mode: "w" means create (overwrite if exists);
+            "w-" means create (fail if exists);
+            "a" means override existing variables (create if does not exist);
+            "r+" means modify existing array *values* only (raise an error if
+            any metadata or shapes would change).
+            The default mode is "a" if ``append_dim`` is set. Otherwise, it is
+            "r+" if ``region`` is set and ``w-`` otherwise.
+        kwargs
+            Additional keyword arguments to pass to :py:func:`~xr.Dataset.to_zarr` function.
+
+        """
+
+        if kwargs.get('group', None) is not None:
+            raise NotImplementedError(
+                'specifying a root group for the collection has not been implemented.'
+            )
+
+        return [value.to_zarr(store, group=key, mode=mode, **kwargs) for key, value in self.items()]
+
     def weighted(self, weights, **kwargs) -> 'Collection':
         return CollectionWeighted(self, weights, *kwargs)
 
@@ -222,3 +248,29 @@ class CollectionWeighted(Weighted['Collection']):
             dataset = dataset.map(func, dim=dim, **kwargs)
             dataset_dict[key] = dataset
         return Collection(dataset_dict)
+
+
+def open_collection(store: typing.Union[str, pydantic.DirectoryPath], **kwargs):
+    """Open a collection stored in a Zarr store.
+    Parameters
+    ----------
+    store : str or pathlib.Path
+         Store or path to directory in local or remote file system.
+    kwargs
+        Additional keyword arguments to pass to :py:func:`~xr.open_dataset` function.
+
+    Returns
+    -------
+    Collection
+        A collection containing the datasets in the Zarr store.
+
+    """
+
+    import zarr
+
+    zstore = zarr.open_group(store, mode='r')
+    datasets = {
+        key: xr.open_dataset(store, group=key, engine='zarr', **kwargs)
+        for key in zstore.group_keys()
+    }
+    return Collection(datasets=datasets)

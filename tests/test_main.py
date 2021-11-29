@@ -3,6 +3,7 @@ import typing
 import pydantic
 import pytest
 import xarray as xr
+import zarr
 
 import xcollection
 
@@ -129,6 +130,18 @@ def test_map_type_error():
 
     with pytest.raises(TypeError):
         c.map(lambda x: x, args=('foo'))
+
+
+def test_to_zarr(tmp_path):
+    c = xcollection.Collection({'foo': ds.isel(time=0), 'bar': ds.isel(y=0)})
+    store = str(tmp_path / 'testing.zarr')
+    c.to_zarr(store)
+
+    zstore = zarr.open_group(store, mode='r')
+    assert set(zstore.group_keys()) == set(c.keys())
+
+    c2 = xcollection.open_collection(store)
+    assert c == c2
 
 
 @pytest.mark.parametrize('datasets', [{'foo': ds, 'bar': dsa}])
