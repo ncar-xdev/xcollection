@@ -43,6 +43,43 @@ class Config:
 
 @pydantic.dataclasses.dataclass(config=Config)
 class Collection(MutableMapping):
+    """A collection of datasets. The keys are the dataset names and the values are the datasets.
+
+    Parameters
+    ----------
+    datasets : dict, optional
+        A dictionary of datasets to initialize the collection with.
+
+    Examples
+    --------
+    >>> import xcollection as xc
+    >>> import xarray as xr
+    >>> ds = xr.tutorial.open_dataset('rasm')
+    >>> c = xc.Collection({'foo': ds.isel(time=0), 'bar': ds.isel(y=0)})
+    >>> c
+    <Collection (2 keys)>
+    🔑 foo
+    <xarray.Dataset>
+    Dimensions:  (y: 205, x: 275)
+    Coordinates:
+        time     object 1980-09-16 12:00:00
+        xc       (y, x) float64 ...
+        yc       (y, x) float64 ...
+    Dimensions without coordinates: y, x
+    Data variables:
+        Tair     (y, x) float64 ...
+    🔑 bar
+    <xarray.Dataset>
+    Dimensions:  (time: 36, x: 275)
+    Coordinates:
+    * time     (time) object 1980-09-16 12:00:00 ... 1983-08-17 00:00:00
+        xc       (x) float64 ...
+        yc       (x) float64 ...
+    Dimensions without coordinates: x
+    Data variables:
+        Tair     (time, x) float64 ...
+    """
+
     datasets: typing.Dict[pydantic.StrictStr, typing.Union[xr.Dataset, xr.DataArray]] = None
 
     @pydantic.validator('datasets', pre=True, each_item=True)
@@ -95,18 +132,22 @@ class Collection(MutableMapping):
         display(HTML(self._repr_html_()))
 
     def keys(self) -> typing.Iterable[str]:
+        """Return the keys of the collection."""
         return self.datasets.keys()
 
     def values(self) -> typing.Iterable[xr.Dataset]:
+        """Return the values of the collection."""
         return self.datasets.values()
 
     def items(self) -> typing.Iterable[typing.Tuple[str, xr.Dataset]]:
+        """Return the items of the collection."""
         return self.datasets.items()
 
     def choose(
         self, data_vars: typing.Union[str, typing.List[str]], *, mode: str = 'any'
     ) -> 'Collection':
         """Return a collection with datasets containing all or any of the specified data variables.
+
         Parameters
         ----------
         data_vars : str or list of str
@@ -119,6 +160,45 @@ class Collection(MutableMapping):
         Collection
             A new collection containing only the selected datasets.
 
+        Examples
+        --------
+        >>> c
+        <Collection (3 keys)>
+        🔑 foo
+        <xarray.Dataset>
+        Dimensions:  (y: 205, x: 275)
+        Coordinates:
+            time     object 1980-09-16 12:00:00
+            xc       (y, x) float64 ...
+            yc       (y, x) float64 ...
+        Dimensions without coordinates: y, x
+        Data variables:
+            Tair     (y, x) float64 ...
+        🔑 bar
+        <xarray.Dataset>
+        Dimensions:  (time: 36, x: 275)
+        Coordinates:
+        * time     (time) object 1980-09-16 12:00:00 ... 1983-08-17 00:00:00
+            xc       (x) float64 ...
+            yc       (x) float64 ...
+        Dimensions without coordinates: x
+        Data variables:
+            Tair     (time, x) float64 ...
+        🔑 baz
+        <xarray.Dataset>
+        Dimensions:  ()
+        Data variables:
+            *empty*
+        >>> len(c)
+        3
+        >>> c.keys()
+        dict_keys(['foo', 'bar', 'baz'])
+        >>> d = c.choose(data_vars=['Tair'], mode='any')
+        >>> len(d)
+        2
+        >>> d.keys()
+        dict_keys(['foo', 'bar'])
+        >>> d = c.choose(data_vars=['Tair'], mode='all')
         """
 
         _VALID_MODES = ['all', 'any']
@@ -144,6 +224,7 @@ class Collection(MutableMapping):
 
     def keymap(self, func: typing.Callable[[str], str]) -> 'Collection':
         """Apply a function to each key in the collection.
+
         Parameters
         ----------
         func : callable
@@ -153,6 +234,36 @@ class Collection(MutableMapping):
         -------
         Collection
             A new collection containing the results of the function.
+
+        Examples
+        --------
+        >>> c
+        <Collection (2 keys)>
+        🔑 foo
+        <xarray.Dataset>
+        Dimensions:  (y: 205, x: 275)
+        Coordinates:
+            time     object 1980-09-16 12:00:00
+            xc       (y, x) float64 ...
+            yc       (y, x) float64 ...
+        Dimensions without coordinates: y, x
+        Data variables:
+            Tair     (y, x) float64 ...
+        🔑 bar
+        <xarray.Dataset>
+        Dimensions:  (time: 36, x: 275)
+        Coordinates:
+        * time     (time) object 1980-09-16 12:00:00 ... 1983-08-17 00:00:00
+            xc       (x) float64 ...
+            yc       (x) float64 ...
+        Dimensions without coordinates: x
+        Data variables:
+            Tair     (time, x) float64 ...
+        >>> c.keys()
+        dict_keys(['foo', 'bar'])
+        >>> d = c.keymap(lambda x: x.upper())
+        >>> d.keys()
+        dict_keys(['FOO', 'BAR'])
 
         """
         if not callable(func):
@@ -167,6 +278,7 @@ class Collection(MutableMapping):
         **kwargs: typing.Dict[str, typing.Any],
     ) -> 'Collection':
         """Apply a function to each dataset in the collection.
+
         Parameters
         ----------
         func : callable
@@ -183,6 +295,52 @@ class Collection(MutableMapping):
         Collection
             A new collection containing the results of the function.
 
+        Examples
+        --------
+        >>> c
+        <Collection (2 keys)>
+        🔑 foo
+        <xarray.Dataset>
+        Dimensions:  (y: 205, x: 275)
+        Coordinates:
+            time     object 1980-09-16 12:00:00
+            xc       (y, x) float64 ...
+            yc       (y, x) float64 ...
+        Dimensions without coordinates: y, x
+        Data variables:
+            Tair     (y, x) float64 ...
+        🔑 bar
+        <xarray.Dataset>
+        Dimensions:  (time: 36, x: 275)
+        Coordinates:
+        * time     (time) object 1980-09-16 12:00:00 ... 1983-08-17 00:00:00
+            xc       (x) float64 ...
+            yc       (x) float64 ...
+        Dimensions without coordinates: x
+        Data variables:
+            Tair     (time, x) float64 ...
+        >>> c.map(func=lambda x: x.isel(x=slice(0, 10)))
+        <Collection (2 keys)>
+        🔑 foo
+        <xarray.Dataset>
+        Dimensions:  (y: 205, x: 10)
+        Coordinates:
+            time     object 1980-09-16 12:00:00
+            xc       (y, x) float64 ...
+            yc       (y, x) float64 ...
+        Dimensions without coordinates: y, x
+        Data variables:
+            Tair     (y, x) float64 ...
+        🔑 bar
+        <xarray.Dataset>
+        Dimensions:  (time: 36, x: 10)
+        Coordinates:
+        * time     (time) object 1980-09-16 12:00:00 ... 1983-08-17 00:00:00
+            xc       (x) float64 ...
+            yc       (x) float64 ...
+        Dimensions without coordinates: x
+        Data variables:
+            Tair     (time, x) float64 ...
         """
         if not callable(func):
             raise TypeError(f'First argument must be callable function, got {type(func)}')
@@ -195,6 +353,7 @@ class Collection(MutableMapping):
 
     def to_zarr(self, store, mode: str = 'w', **kwargs):
         """Write the collection to a Zarr store.
+
         Parameters
         ----------
         store : str or pathlib.Path
@@ -210,6 +369,9 @@ class Collection(MutableMapping):
         kwargs
             Additional keyword arguments to pass to :py:func:`~xr.Dataset.to_zarr` function.
 
+        Examples
+        --------
+        >>> c.to_zarr(store='/tmp/foo.zarr', mode='w')
         """
 
         if kwargs.get('group', None) is not None:
@@ -220,6 +382,7 @@ class Collection(MutableMapping):
         return [value.to_zarr(store, group=key, mode=mode, **kwargs) for key, value in self.items()]
 
     def weighted(self, weights, **kwargs) -> 'Collection':
+        """Return a collection with datasets weighted by the given weights."""
         return CollectionWeighted(self, weights, *kwargs)
 
 
@@ -252,6 +415,7 @@ class CollectionWeighted(Weighted['Collection']):
 
 def open_collection(store: typing.Union[str, pydantic.DirectoryPath], **kwargs):
     """Open a collection stored in a Zarr store.
+
     Parameters
     ----------
     store : str or pathlib.Path
@@ -263,6 +427,11 @@ def open_collection(store: typing.Union[str, pydantic.DirectoryPath], **kwargs):
     -------
     Collection
         A collection containing the datasets in the Zarr store.
+
+    Examples
+    --------
+    >>> import xcollection as xc
+    >>> c = xc.open_collection('/tmp/foo.zarr', decode_times=True, use_cftime=True)
 
     """
 

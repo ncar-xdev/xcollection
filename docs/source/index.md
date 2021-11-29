@@ -2,12 +2,26 @@
 
 ```
 
-## Documentation Contents
+```{toctree}
+---
+maxdepth: 2
+hidden:
+---
+tutorials/index.md
+```
 
 ```{toctree}
 ---
 maxdepth: 2
-caption: Reference
+hidden:
 ---
-changelog.md
+how-to-guides/index.md
+```
+
+```{toctree}
+---
+maxdepth: 2
+hidden:
+---
+reference/index.md
 ```
