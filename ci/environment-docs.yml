@@ -9,9 +9,8 @@ dependencies:
   - netcdf4
   - pip
   - pooch
-  - pooch
   - pydantic
-  - sphinx-book-theme
+  - furo
   - sphinx-copybutton
   - xarray
   - zarr
