@@ -43,6 +43,44 @@ class Config:
 
 @pydantic.dataclasses.dataclass(config=Config)
 class Collection(MutableMapping):
+    """A collection of datasets. The keys are the dataset names and the values are the datasets.
+
+    Parameters
+    ----------
+    datasets : dict, optional
+        A dictionary of datasets to initialize the collection with.
+
+    Examples
+    --------
+    >>> import xcollection as xc
+    >>> import xarray as xr
+    >>> ds = xr.tutorial.open_dataset('rasm')
+    >>> c = xc.Collection({'foo': ds.isel(time=0), 'bar': ds.isel(y=0)})
+    >>> c
+    <Collection (2 keys)>
+    🔑 foo
+    <xarray.Dataset>
+    Dimensions:  (y: 205, x: 275)
+    Coordinates:
+        time     object 1980-09-16 12:00:00
+        xc       (y, x) float64 ...
+        yc       (y, x) float64 ...
+    Dimensions without coordinates: y, x
+    Data variables:
+        Tair     (y, x) float64 ...
+
+    🔑 bar
+    <xarray.Dataset>
+    Dimensions:  (time: 36, x: 275)
+    Coordinates:
+    * time     (time) object 1980-09-16 12:00:00 ... 1983-08-17 00:00:00
+        xc       (x) float64 ...
+        yc       (x) float64 ...
+    Dimensions without coordinates: x
+    Data variables:
+        Tair     (time, x) float64 ...
+    """
+
     datasets: typing.Dict[pydantic.StrictStr, typing.Union[xr.Dataset, xr.DataArray]] = None
 
     @pydantic.validator('datasets', pre=True, each_item=True)
@@ -123,6 +161,52 @@ class Collection(MutableMapping):
         Collection
             A new collection containing only the selected datasets.
 
+        Examples
+        --------
+        >>> c
+        <Collection (3 keys)>
+        🔑 foo
+        <xarray.Dataset>
+        Dimensions:  (y: 205, x: 275)
+        Coordinates:
+            time     object 1980-09-16 12:00:00
+            xc       (y, x) float64 ...
+            yc       (y, x) float64 ...
+        Dimensions without coordinates: y, x
+        Data variables:
+            Tair     (y, x) float64 ...
+
+        🔑 bar
+        <xarray.Dataset>
+        Dimensions:  (time: 36, x: 275)
+        Coordinates:
+        * time     (time) object 1980-09-16 12:00:00 ... 1983-08-17 00:00:00
+            xc       (x) float64 ...
+            yc       (x) float64 ...
+        Dimensions without coordinates: x
+        Data variables:
+            Tair     (time, x) float64 ...
+
+        🔑 baz
+        <xarray.Dataset>
+        Dimensions:  ()
+        Data variables:
+            *empty*
+
+        >>> len(c)
+        3
+        >>> c.keys()
+        dict_keys(['foo', 'bar', 'baz'])
+        >>> d = c.choose(data_vars=['Tair'])
+        >>> len(d)
+        2
+        >>> d.keys()
+        dict_keys(['foo', 'bar'])
+        >>> d = c.choose(data_vars=['Tair'], mode='all')
+        File "/../../.../xcollection/xcollection/main.py", line 147, in _select_vars
+            self, data_vars: typing.Union[str, typing.List[str]], *, mode: str = 'any'
+        KeyError: "No data variables: `['Tair']` found in dataset: <xarray.Dataset>\nDimensions:  ()\nData variables:\n    *empty*"
+
         """
 
         _VALID_MODES = ['all', 'any']
@@ -159,6 +243,38 @@ class Collection(MutableMapping):
         Collection
             A new collection containing the results of the function.
 
+        Examples
+        --------
+        >>> c
+        <Collection (2 keys)>
+        🔑 foo
+        <xarray.Dataset>
+        Dimensions:  (y: 205, x: 275)
+        Coordinates:
+            time     object 1980-09-16 12:00:00
+            xc       (y, x) float64 ...
+            yc       (y, x) float64 ...
+        Dimensions without coordinates: y, x
+        Data variables:
+            Tair     (y, x) float64 ...
+
+        🔑 bar
+        <xarray.Dataset>
+        Dimensions:  (time: 36, x: 275)
+        Coordinates:
+        * time     (time) object 1980-09-16 12:00:00 ... 1983-08-17 00:00:00
+            xc       (x) float64 ...
+            yc       (x) float64 ...
+        Dimensions without coordinates: x
+        Data variables:
+            Tair     (time, x) float64 ...
+
+        >>> c.keys()
+        dict_keys(['foo', 'bar'])
+        >>> d = c.keymap(lambda x: x.upper())
+        >>> d.keys()
+        dict_keys(['FOO', 'BAR'])
+
         """
         if not callable(func):
             raise TypeError(f'First argument must be callable function, got {type(func)}')
@@ -189,6 +305,55 @@ class Collection(MutableMapping):
         Collection
             A new collection containing the results of the function.
 
+        Examples
+        --------
+        >>> c
+        <Collection (2 keys)>
+        🔑 foo
+        <xarray.Dataset>
+        Dimensions:  (y: 205, x: 275)
+        Coordinates:
+            time     object 1980-09-16 12:00:00
+            xc       (y, x) float64 ...
+            yc       (y, x) float64 ...
+        Dimensions without coordinates: y, x
+        Data variables:
+            Tair     (y, x) float64 ...
+
+        🔑 bar
+        <xarray.Dataset>
+        Dimensions:  (time: 36, x: 275)
+        Coordinates:
+        * time     (time) object 1980-09-16 12:00:00 ... 1983-08-17 00:00:00
+            xc       (x) float64 ...
+            yc       (x) float64 ...
+        Dimensions without coordinates: x
+        Data variables:
+            Tair     (time, x) float64 ...
+
+        >>> c.map(func=lambda x: x.isel(x=slice(0, 10)))
+        <Collection (2 keys)>
+        🔑 foo
+        <xarray.Dataset>
+        Dimensions:  (y: 205, x: 10)
+        Coordinates:
+            time     object 1980-09-16 12:00:00
+            xc       (y, x) float64 ...
+            yc       (y, x) float64 ...
+        Dimensions without coordinates: y, x
+        Data variables:
+            Tair     (y, x) float64 ...
+
+        🔑 bar
+        <xarray.Dataset>
+        Dimensions:  (time: 36, x: 10)
+        Coordinates:
+        * time     (time) object 1980-09-16 12:00:00 ... 1983-08-17 00:00:00
+            xc       (x) float64 ...
+            yc       (x) float64 ...
+        Dimensions without coordinates: x
+        Data variables:
+            Tair     (time, x) float64 ...
         """
         if not callable(func):
             raise TypeError(f'First argument must be callable function, got {type(func)}')
@@ -217,6 +382,9 @@ class Collection(MutableMapping):
         kwargs
             Additional keyword arguments to pass to :py:func:`~xr.Dataset.to_zarr` function.
 
+        Examples
+        --------
+        >>> c.to_zarr(store='/tmp/foo.zarr', mode='w')
         """
 
         if kwargs.get('group', None) is not None:
@@ -272,6 +440,11 @@ def open_collection(store: typing.Union[str, pydantic.DirectoryPath], **kwargs):
     -------
     Collection
         A collection containing the datasets in the Zarr store.
+
+    Examples
+    --------
+    >>> import xcollection as xc
+    >>> c = xc.open_collection('/tmp/foo.zarr', decode_times=True, use_cftime=True)
 
     """
 
