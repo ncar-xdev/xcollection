@@ -7,6 +7,13 @@ import toolz
 import xarray as xr
 from xarray.core.weighted import Weighted
 
+try:
+    import dask.base
+
+    dask_is_installed = True
+except ModuleNotFoundError:
+    dask_is_installed = False
+
 
 def _rpartial(func, *args, **kwargs):
     """Partially applies last arguments.
@@ -142,6 +149,21 @@ class Collection(MutableMapping):
     def items(self) -> typing.Iterable[typing.Tuple[str, xr.Dataset]]:
         """Return the items of the collection."""
         return self.datasets.items()
+
+    def tokens(self) -> typing.Dict[str, str]:
+        """Return deterministic hash tokens of datasets in a collection.
+
+        This uses dask's tokenize function to generate a dictionary of tokens."""
+        if not dask_is_installed:
+            raise ImportError(
+                'Dask is required to use the `tokens` method. Please install it using either `pip` or `conda`'
+            )
+
+        return {key: dask.base.tokenize(ds) for key, ds in self.items()}
+
+    def __dask_tokenize__(self) -> str:
+        """Register a tokenize implementation for dask's deterministic hashing."""
+        return (Collection, self.tokens())
 
     def choose(
         self, data_vars: typing.Union[str, typing.List[str]], *, mode: str = 'any'
