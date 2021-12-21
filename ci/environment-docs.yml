@@ -1,4 +1,4 @@
-name: xcollection-docs
+name: xcollection-dev
 channels:
   - conda-forge
   - nodefaults

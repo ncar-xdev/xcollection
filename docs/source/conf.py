@@ -2,20 +2,9 @@
 
 
 import datetime
-import os
-import sys
 
 import xcollection
 
-cwd = os.getcwd()
-parent = os.path.dirname(cwd)
-sys.path.insert(0, parent)
-
-
-# -- General configuration -----------------------------------------------------
-
-# If your documentation needs a minimal Sphinx version, state it here.
-# needs_sphinx = '1.0'
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
@@ -27,33 +16,21 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.extlinks',
     'sphinx.ext.intersphinx',
-    # 'IPython.sphinxext.ipython_console_highlighting',
-    # 'IPython.sphinxext.ipython_directive',
     'sphinx.ext.napoleon',
     'myst_nb',
     'sphinxext.opengraph',
     'sphinx_copybutton',
-    'sphinx_comments',
 ]
-
-extlinks = {
-    'issue': ('https://github.com/NCAR/xcollection/issues/%s', 'GH#'),
-    'pr': ('https://github.com/NCAR/xcollection/pull/%s', 'GH#'),
-}
 
 
 autodoc_member_order = 'groupwise'
 
 # MyST config
 myst_enable_extensions = ['amsmath', 'colon_fence', 'deflist', 'html_image']
-myst_url_schemes = ('http', 'https', 'mailto')
+myst_url_schemes = ['http', 'https', 'mailto']
 
-comments_config = {
-    'utterances': {'repo': 'NCAR/xcollection', 'optional': 'config', 'label': '💬 comment'},
-    'hypothesis': False,
-}
 
-jupyter_execute_notebooks = 'off'
+jupyter_execute_notebooks = 'cache'
 
 # sphinx-copybutton configurations
 copybutton_prompt_text = r'>>> |\.\.\. |\$ |In \[\d*\]: | {2,5}\.\.\.: | {5,8}: '
