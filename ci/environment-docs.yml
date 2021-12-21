@@ -4,18 +4,18 @@ channels:
   - nodefaults
 dependencies:
   - cf_xarray
+  - furo
   - jupyterlab
   - myst-nb
   - netcdf4
   - pip
   - pooch
   - pydantic
-  - furo
   - sphinx-copybutton
+  - sphinx-inline-tabs
   - xarray
   - zarr
   - pip:
       - sphinxext-opengraph
-      - sphinx-comments
       - -r ../requirements.txt
       - -e ..

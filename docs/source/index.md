@@ -1,6 +1,6 @@
 # Welcome to xcollection's documentation!
 
-xcollection provides custom caching utility functions in Python.
+xcollection extends [xarray's data model](https://xarray.pydata.org/en/stable/getting-started-guide/why-xarray.html) to be able to handle a dictionary of xarray Datasets.
 
 ## Get in touch
 
