@@ -1,11 +1,15 @@
+import functools
 import typing
 from collections.abc import MutableMapping
+from html import escape
 from typing import Hashable, Iterable, Optional, Union
 
 import pydantic
 import toolz
 import xarray as xr
 from xarray.core.weighted import Weighted
+
+unicode_key = u'\U0001F511'
 
 
 def _rpartial(func, *args, **kwargs):
@@ -112,7 +116,7 @@ class Collection(MutableMapping):
         return key in self.datasets
 
     def __repr__(self) -> str:
-        unicode_key = u'\U0001F511'
+
         output = ''.join(f'{unicode_key} {key}\n{repr(value)}\n\n' for key, value in self.items())
         return f'<{type(self).__name__} ({len(self)} keys)>\n{output}'
 
@@ -121,7 +125,31 @@ class Collection(MutableMapping):
         Return an html representation for the collection object.
         Mainly for IPython notebook
         """
-        # TODO: Extend Xarray HTML wrapper to output collapsible dataset entries
+
+        def _summarize_datasets(datasets):
+            ds_li = ''.join(
+                f"<li class='xr-var-item'><strong>{unicode_key}&nbsp;{key}</strong>{xr.core.formatting_html.dataset_repr(ds)}</li>"
+                for key, ds in datasets.items()
+            )
+            return f'<ul>{ds_li}</ul>'
+
+        keys_section = functools.partial(
+            xr.core.formatting_html._mapping_section,
+            name='Keys',
+            details_func=_summarize_datasets,
+            max_items_collapse=15,
+            expand_option_name='display_expand_data_vars',
+        )
+        obj_type = f'xcollection.{type(self).__name__}'
+        header = f"<div class='xr-header'><div class='xr-obj-type'>{escape(obj_type)}</div></div>"
+        return (
+            '<div>'
+            "<div class='xr-wrap' style='display:none'>"
+            f'{header}'
+            f'{keys_section(self.datasets)}'
+            '</div>'
+            '</div>'
+        )
 
     def _ipython_display_(self):
         """
