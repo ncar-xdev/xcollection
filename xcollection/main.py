@@ -222,6 +222,78 @@ class Collection(MutableMapping):
 
         return type(self)(datasets=result)
 
+    def filter(self, *, by: str, func: typing.Callable) -> 'Collection':
+        """Return a collection with datasets that match the filter function.
+
+        Parameters
+        ----------
+        by : str
+            Option to filter by. Must be one of 'key', 'value', or 'item'.
+        func : callable
+            The filter function.
+
+        Returns
+        -------
+        Collection
+            A new collection containing only the selected datasets.
+
+        Examples
+        --------
+        >>> c
+        <Collection (3 keys)>
+        🔑 foo
+        <xarray.Dataset>
+        Dimensions:  (y: 205, x: 275)
+        Coordinates:
+            time     object 1980-09-16 12:00:00
+            xc       (y, x) float64 ...
+            yc       (y, x) float64 ...
+        Dimensions without coordinates: y, x
+        Data variables:
+            Tair     (y, x) float64 ...
+        🔑 bar
+        <xarray.Dataset>
+        Dimensions:  (time: 36, x: 275)
+        Coordinates:
+        * time     (time) object 1980-09-16 12:00:00 ... 1983-08-17 00:00:00
+            xc       (x) float64 ...
+            yc       (x) float64 ...
+        Dimensions without coordinates: x
+        Data variables:
+            Tair     (time, x) float64 ...
+        🔑 baz
+        <xarray.Dataset>
+        Dimensions:  ()
+        Data variables:
+            *empty*
+        >>> len(c)
+        3
+        >>> c.keys()
+        dict_keys(['foo', 'bar', 'baz'])
+        >>> c.filter(by='key', func=lambda key: isinstance(key, str))
+        >>> c.filter(by='value', func=lambda ds: 'Tair' in ds.data_vars)
+        >>> c.filter(
+        ...     by='item',
+        ...     func=lambda item: 2014 in item[1].time.dt.year and isinstance(item[0], str),
+        ... )
+
+        """
+
+        _VALID_BY = ['key', 'value', 'item']
+        if by not in _VALID_BY:
+            raise ValueError(f'Invalid by: {by}. Accepted by are {_VALID_BY}')
+
+        if by == 'key':
+            result = toolz.keyfilter(func, self.datasets)
+
+        elif by == 'value':
+            result = toolz.valfilter(func, self.datasets)
+
+        elif by == 'item':
+            result = toolz.itemfilter(func, self.datasets)
+
+        return type(self)(datasets=result)
+
     def keymap(self, func: typing.Callable[[str], str]) -> 'Collection':
         """Apply a function to each key in the collection.
 

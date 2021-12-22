@@ -132,6 +132,20 @@ def test_map_type_error():
         c.map(lambda x: x, args=('foo'))
 
 
+@pytest.mark.parametrize(
+    'by, func, expected',
+    [
+        ('key', lambda x: isinstance(x, str), 2),
+        ('value', lambda ds: 'Tair' in ds.data_vars, 1),
+        ('item', lambda item: 2014 in item[1].time.dt.year and isinstance(item[0], str), 1),
+    ],
+)
+def test_filter(by, func, expected):
+    c = xcollection.Collection({'foo': ds, 'bar': dsa})
+    d = c.filter(by=by, func=func)
+    assert len(d) == expected
+
+
 def test_to_zarr(tmp_path):
     c = xcollection.Collection({'foo': ds.isel(time=0), 'bar': ds.isel(y=0)})
     store = str(tmp_path / 'testing.zarr')
