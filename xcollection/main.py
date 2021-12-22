@@ -296,7 +296,7 @@ class Collection(MutableMapping):
     def map(
         self,
         func: typing.Callable[[xr.Dataset], xr.Dataset],
-        args: typing.Sequence[typing.Any] = (),
+        args: typing.Sequence[typing.Any] = None,
         **kwargs: typing.Dict[str, typing.Any],
     ) -> 'Collection':
         """Apply a function to each dataset in the collection.
@@ -364,6 +364,8 @@ class Collection(MutableMapping):
         Data variables:
             Tair     (time, x) float64 ...
         """
+        args = args or ()
+
         if not callable(func):
             raise TypeError(f'First argument must be callable function, got {type(func)}')
 
@@ -389,7 +391,7 @@ class Collection(MutableMapping):
             The default mode is "a" if ``append_dim`` is set. Otherwise, it is
             "r+" if ``region`` is set and ``w-`` otherwise.
         kwargs
-            Additional keyword arguments to pass to :py:func:`~xr.Dataset.to_zarr` function.
+            Additional keyword arguments to pass to :py:meth:`~xarray.Dataset.to_zarr` method.
 
         Examples
         --------
@@ -443,7 +445,7 @@ def open_collection(store: typing.Union[str, pydantic.DirectoryPath], **kwargs):
     store : str or pathlib.Path
          Store or path to directory in local or remote file system.
     kwargs
-        Additional keyword arguments to pass to :py:func:`~xr.open_dataset` function.
+        Additional keyword arguments to pass to :py:func:`~xarray.open_dataset` function.
 
     Returns
     -------
