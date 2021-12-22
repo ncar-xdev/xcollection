@@ -25,9 +25,7 @@ conda install -c conda-forge xcollection
 ```
 
 [github-ci-badge]: https://img.shields.io/github/workflow/status/NCAR/xcollection/CI?label=CI&logo=github&style=for-the-badge
-[github-lint-badge]: https://img.shields.io/github/workflow/status/NCAR/xcollection/linting?label=linting&logo=github&style=for-the-badge
 [github-ci-link]: https://github.com/NCAR/xcollection/actions?query=workflow%3ACI
-[github-lint-link]: https://github.com/NCAR/xcollection/actions?query=workflow%3Alinting
 [codecov-badge]: https://img.shields.io/codecov/c/github/NCAR/xcollection.svg?logo=codecov&style=for-the-badge
 [codecov-link]: https://codecov.io/gh/NCAR/xcollection
 [rtd-badge]: https://img.shields.io/readthedocs/xcollection/latest.svg?style=for-the-badge
