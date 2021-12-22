@@ -1,5 +1,6 @@
 import typing
 
+import dask
 import pydantic
 import pytest
 import xarray as xr
@@ -71,6 +72,13 @@ def test_getitem():
 def test_iter():
     c = xcollection.Collection()
     assert isinstance(iter(c), typing.Iterator)
+
+
+def test_tokens():
+    c = xcollection.Collection({'foo': ds.isel(time=0), 'bar': ds.isel(y=0)})
+    tokens = c.tokens()
+    assert tokens.keys() == {'foo', 'bar'}
+    assert tokens['foo'] == dask.base.tokenize(c['foo'])
 
 
 @pytest.mark.parametrize('data_vars', ['Tair', ['Tair']])
