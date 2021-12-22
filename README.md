@@ -1,10 +1,10 @@
 # xcollection
 
-| CI          | [![GitHub Workflow Status][github-ci-badge]][github-ci-link] [![GitHub Workflow Status][github-lint-badge]][github-lint-link] [![Code Coverage Status][codecov-badge]][codecov-link] |
-| :---------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| **Docs**    |                                                                    [![Documentation Status][rtd-badge]][rtd-link]                                                                    |
-| **Package** |                                                         [![Conda][conda-badge]][conda-link] [![PyPI][pypi-badge]][pypi-link]                                                         |
-| **License** |                                                                        [![License][license-badge]][repo-link]                                                                        |
+| CI          | [![GitHub Workflow Status][github-ci-badge]][github-ci-link] [![Code Coverage Status][codecov-badge]][codecov-link] |
+| :---------- | :-----------------------------------------------------------------------------------------------------------------: |
+| **Docs**    |                                   [![Documentation Status][rtd-badge]][rtd-link]                                    |
+| **Package** |                        [![Conda][conda-badge]][conda-link] [![PyPI][pypi-badge]][pypi-link]                         |
+| **License** |                                       [![License][license-badge]][repo-link]                                        |
 
 xcollection extends [xarray's data model](https://xarray.pydata.org/en/stable/getting-started-guide/why-xarray.html) to be able to handle a dictionary of xarray Datasets.
 
