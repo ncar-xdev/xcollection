@@ -1,12 +1,28 @@
 # xcollection
 
-A high-level mapping of name/key to Xarray.Datasets
+| CI          | [![GitHub Workflow Status][github-ci-badge]][github-ci-link] [![GitHub Workflow Status][github-lint-badge]][github-lint-link] [![Code Coverage Status][codecov-badge]][codecov-link] |
+| :---------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| **Docs**    |                                                                    [![Documentation Status][rtd-badge]][rtd-link]                                                                    |
+| **Package** |                                                         [![Conda][conda-badge]][conda-link] [![PyPI][pypi-badge]][pypi-link]                                                         |
+| **License** |                                                                        [![License][license-badge]][repo-link]                                                                        |
 
-| CI          | [![GitHub Workflow Status][github-ci-badge]][github-ci-link] [![Code Coverage Status][codecov-badge]][codecov-link] |
-| :---------- | :-----------------------------------------------------------------------------------------------------------------: |
-| **Docs**    |                                   [![Documentation Status][rtd-badge]][rtd-link]                                    |
-| **Package** |                        [![Conda][conda-badge]][conda-link] [![PyPI][pypi-badge]][pypi-link]                         |
-| **License** |                                       [![License][license-badge]][repo-link]                                        |
+xcollection extends [xarray's data model](https://xarray.pydata.org/en/stable/getting-started-guide/why-xarray.html) to be able to handle a dictionary of xarray Datasets.
+
+See [documentation](https://xcollection.readthedocs.io/en/latest/) for more information.
+
+## Installation
+
+xcollection can be installed from PyPI with pip:
+
+```bash
+python -m pip install xcollection
+```
+
+It is also available from `conda-forge` for conda installations:
+
+```bash
+conda install -c conda-forge xcollection
+```
 
 [github-ci-badge]: https://img.shields.io/github/workflow/status/NCAR/xcollection/CI?label=CI&logo=github&style=for-the-badge
 [github-ci-link]: https://github.com/NCAR/xcollection/actions?query=workflow%3ACI

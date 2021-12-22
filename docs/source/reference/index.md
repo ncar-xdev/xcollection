@@ -3,10 +3,15 @@
 This page provides an auto-generated summary of xcollection’s API.
 For more details and examples, refer to the relevant chapters in the main part of the documentation.
 
-```{toctree}
----
-maxdepth: 2
-caption: Reference
----
-main.md
+## Collection
+
+```{eval-rst}
+
+.. autosummary:: xcollection.main.Collection
+.. autosummary:: xcollection.main.open_collection
+
+.. autoclass:: xcollection.main.Collection
+    :members:
+
+.. autofunction:: xcollection.main.open_collection
 ```
