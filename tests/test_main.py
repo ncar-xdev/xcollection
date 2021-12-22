@@ -146,6 +146,12 @@ def test_filter(by, func, expected):
     assert len(d) == expected
 
 
+def test_filter_error():
+    c = xcollection.Collection()
+    with pytest.raises(ValueError):
+        c.filter(by='foo', func=lambda x: x)
+
+
 def test_to_zarr(tmp_path):
     c = xcollection.Collection({'foo': ds.isel(time=0), 'bar': ds.isel(y=0)})
     store = str(tmp_path / 'testing.zarr')
