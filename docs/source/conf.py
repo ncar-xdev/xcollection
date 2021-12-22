@@ -32,6 +32,8 @@ myst_url_schemes = ['http', 'https', 'mailto']
 
 
 jupyter_execute_notebooks = 'cache'
+execution_timeout = 600
+execution_allow_errors = True
 
 # sphinx-copybutton configurations
 copybutton_prompt_text = r'>>> |\.\.\. |\$ |In \[\d*\]: | {2,5}\.\.\.: | {5,8}: '
