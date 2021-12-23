@@ -119,5 +119,6 @@ To load a collection from disk, xcollection provides a {py:func}`xcollection.mai
 
 ```{code-cell} ipython3
 new_col = xc.open_collection('/tmp/my_collection.zarr')
+assert col == new_col
 new_col
 ```
