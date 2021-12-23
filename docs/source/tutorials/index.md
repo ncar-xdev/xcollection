@@ -32,7 +32,7 @@ dsa.attrs = {}
 
 ```{code-cell} ipython3
 col = xc.Collection({'foo': ds, 'bar': dsa})
-print(col)
+col
 ```
 
 ## Accessing keys and values in a collection
@@ -67,7 +67,7 @@ def subset(ds: xr.Dataset, dim_slice: typing.Dict[str, slice]):
 
 
 new_col = col.map(subset, dim_slice={"time": slice(0, 3)})
-print(new_col)
+new_col
 ```
 
 As you can see, the new collection has the same keys as the original, but the values are subsets of the original values.
@@ -79,7 +79,7 @@ def capitalize(key: str):
     return key.upper()
 
 new_col_capitalized = col.keymap(capitalize)
-print(new_col_capitalized)
+new_col_capitalized
 ```
 
 ## Filtering a collection
@@ -88,7 +88,7 @@ xcollection provides a {py:func}`xcollection.main.Collection.choose` method that
 
 ```{code-cell} ipython3
 new_col = col.choose(['air'], mode='any')
-print(new_col)
+new_col
 ```
 
 As you can see in the output, the new collection only contains the dataset `foo`.
@@ -119,5 +119,5 @@ To load a collection from disk, xcollection provides a {py:func}`xcollection.mai
 
 ```{code-cell} ipython3
 new_col = xc.open_collection('/tmp/my_collection.zarr')
-print(new_col)
+new_col
 ```

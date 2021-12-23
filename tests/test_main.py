@@ -28,6 +28,12 @@ def test_repr():
     assert 'bar' in repr(c)
 
 
+def test_html_repr():
+    c = xcollection.Collection({'foo': ds, 'bar': ds})
+    formatted = c._repr_html_()
+    assert formatted.count("<li class='xr-var-item'><strong>") == len(c)
+
+
 @pytest.mark.parametrize('datasets', [{'a': ds, 'b': 5}, {1: ds}])
 def test_validation_error(datasets):
     with pytest.raises(pydantic.ValidationError):
