@@ -115,6 +115,18 @@ class Collection(MutableMapping):
     def __contains__(self, key: str) -> bool:
         return key in self.datasets
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Collection):
+            return False
+        if set(self.keys()) != set(other.keys()):
+            return False
+        for key in sorted(self.keys()):
+            try:
+                xr.testing.assert_identical(self[key], other[key])
+            except AssertionError:
+                return False
+        return True
+
     def __repr__(self) -> str:
 
         output = ''.join(f'{unicode_key} {key}\n{repr(value)}\n\n' for key, value in self.items())
