@@ -162,6 +162,7 @@ def test_equivalence():
     a = xcollection.Collection({'foo': ds, 'bar': ds})
     b = a.filter(by='key', func=lambda x: x == 'foo')
     c = xcollection.Collection({'foo': ds, 'bar': ds.isel(time=0)})
+    assert a != ds
     assert a == a
     assert a != b
     assert a != c
