@@ -84,6 +84,41 @@ new_col_capitalized
 
 ## Filtering a collection
 
+xcollection provides a number of methods that allow us to filter the keys and values of a collection. One such method is {py:func}`xcollection.main.Collection.filter`. This method expectes two arguments:
+
+1. `func`: a function that returns a boolean value
+2. `by`: which specifies whether the function is applied on keys, values or items.
+
+### Filtering based on keys
+
+```{code-cell} ipython3
+def contains_foo(key: str) -> bool:
+    return 'foo' in  key.lower()
+
+col.filter(func=contains_foo, by='key')
+```
+
+### Filtering based on values
+
+```{code-cell} ipython3
+def contains_time(ds: xr.Dataset) -> bool:
+    return 'time' in ds.coords
+
+col.filter(func=contains_time, by='value')
+```
+
+### Filtering based on items
+
+```{code-cell} ipython3
+def contains_foo_and_spans_2014(item: tuple) -> bool:
+    key, ds = item
+    return 'foo' in key.lower() and 2014 in ds.time.dt.year
+
+col.filter(func=contains_foo_and_spans_2014, by='item')
+```
+
+## Choosing a subset of a collection based on data variables
+
 xcollection provides a {py:func}`xcollection.main.Collection.choose` method that allows us to filter a collection based on whether datasets in a collection contain one or more data variables. For example, our existing `col` collection contains two datasets. `foo` consists of a dataset with `air` as a data variable and `bar` has `air_temperature` as a data variable. We can filter the collection to only include datasets that have `air` as a data variable as follows:
 
 ```{code-cell} ipython3
