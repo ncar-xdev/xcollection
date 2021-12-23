@@ -135,10 +135,11 @@ class Collection(MutableMapping):
 
         keys_section = functools.partial(
             xr.core.formatting_html._mapping_section,
-            name='Keys',
+            name='Datasets',
             details_func=_summarize_datasets,
-            max_items_collapse=15,
+            max_items_collapse=5,
             expand_option_name='display_expand_data_vars',
+            enabled=True,
         )
         obj_type = f'xcollection.{type(self).__name__}'
         header = f"<div class='xr-header'><div class='xr-obj-type'>{escape(obj_type)}</div></div>"
