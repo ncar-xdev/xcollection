@@ -1,6 +1,33 @@
 # Changelog
 
-## 🚀 xcollection v2021.12.23 🚀 (Unreleased)
+## 🚀 xcollection v2021.12.23 🚀
+
+([full changelog](https://github.com/NCAR/xcollection/compare/v2021.12.01...22f8de8893d78467598d6683348b2bec2e039a86))
+
+### Enhancements made
+
+- Add robust equivalence method [#43](https://github.com/NCAR/xcollection/pull/43) ([@andersy005](https://github.com/andersy005))
+- Add HTML repr [#42](https://github.com/NCAR/xcollection/pull/42) ([@andersy005](https://github.com/andersy005))
+- Add `.filter` method [#41](https://github.com/NCAR/xcollection/pull/41) ([@andersy005](https://github.com/andersy005))
+
+### Maintenance and upkeep improvements
+
+- Remove linting workflow [#37](https://github.com/NCAR/xcollection/pull/37) ([@andersy005](https://github.com/andersy005))
+- [pre-commit.ci] pre-commit autoupdate [#32](https://github.com/NCAR/xcollection/pull/32) ([@pre-commit-ci](https://github.com/pre-commit-ci))
+
+### Documentation improvements
+
+- Update changelog [#45](https://github.com/NCAR/xcollection/pull/45) ([@andersy005](https://github.com/andersy005))
+- Add docs on filtering [#44](https://github.com/NCAR/xcollection/pull/44) ([@andersy005](https://github.com/andersy005))
+- Fix README: Remove old CI linting badges [#38](https://github.com/NCAR/xcollection/pull/38) ([@andersy005](https://github.com/andersy005))
+- Update documentation [#35](https://github.com/NCAR/xcollection/pull/35) ([@andersy005](https://github.com/andersy005))
+- Add documentation template [#30](https://github.com/NCAR/xcollection/pull/30) ([@andersy005](https://github.com/andersy005))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/NCAR/xcollection/graphs/contributors?from=2021-11-29&to=2021-12-23&type=c))
+
+[@andersy005](https://github.com/search?q=repo%3ANCAR%2Fxcollection+involves%3Aandersy005+updated%3A2021-11-29..2021-12-23&type=Issues) | [@pre-commit-ci](https://github.com/search?q=repo%3ANCAR%2Fxcollection+involves%3Apre-commit-ci+updated%3A2021-11-29..2021-12-23&type=Issues)
 
 ## 🚀 xcollection v2021.12.01 🚀
 
