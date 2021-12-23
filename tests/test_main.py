@@ -158,6 +158,15 @@ def test_filter_error():
         c.filter(by='foo', func=lambda x: x)
 
 
+def test_equivalence():
+    a = xcollection.Collection({'foo': ds, 'bar': ds})
+    b = a.filter(by='key', func=lambda x: x == 'foo')
+    c = xcollection.Collection({'foo': ds, 'bar': ds.isel(time=0)})
+    assert a == a
+    assert a != b
+    assert a != c
+
+
 def test_to_zarr(tmp_path):
     c = xcollection.Collection({'foo': ds.isel(time=0), 'bar': ds.isel(y=0)})
     store = str(tmp_path / 'testing.zarr')
