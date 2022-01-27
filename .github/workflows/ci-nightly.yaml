@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    if: github.repository == 'NCAR/xcollection'
+    if: github.repository == 'ncar-xdev/xcollection'
     name: python-${{ matrix.python-version }}
     runs-on: ubuntu-latest
     defaults:
