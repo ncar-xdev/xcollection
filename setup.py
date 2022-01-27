@@ -35,11 +35,11 @@ setup(
     name='xcollection',
     packages=find_packages(),
     entry_points={},
-    url='https://github.com/NCAR/xcollection',
+    url='https://github.com/ncar-xdev/xcollection',
     project_urls={
-        'Documentation': 'https://github.com/NCAR/xcollection',
-        'Source': 'https://github.com/NCAR/xcollection',
-        'Tracker': 'https://github.com/NCAR/xcollection/issues',
+        'Documentation': 'https://github.com/ncar-xdev/xcollection',
+        'Source': 'https://github.com/ncar-xdev/xcollection',
+        'Tracker': 'https://github.com/ncar-xdev/xcollection/issues',
     },
     use_scm_version={
         'version_scheme': 'post-release',

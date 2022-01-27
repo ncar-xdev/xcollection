@@ -7,7 +7,7 @@ on:
 jobs:
   pre-job:
     runs-on: ubuntu-latest
-    if: github.repository == 'NCAR/xcollection'
+    if: github.repository == 'ncar-xdev/xcollection'
     outputs:
       should_skip: ${{ steps.skip_check.outputs.should_skip }}
     steps:

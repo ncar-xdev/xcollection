@@ -4,8 +4,8 @@ xcollection extends [xarray's data model](https://xarray.pydata.org/en/stable/ge
 
 ## Get in touch
 
-- If you encounter any errors or problems with **xcollection**, please open an issue at the GitHub [main repository](http://github.com/NCAR/xcollection/issues).
-- If you have a question like "How do I find x?", ask on [GitHub discussions](https://github.com/NCAR/xcollection/discussions). Please include a self-contained reproducible example if possible.
+- If you encounter any errors or problems with **xcollection**, please open an issue at the GitHub [main repository](http://github.com/ncar-xdev/xcollection/issues).
+- If you have a question like "How do I find x?", ask on [GitHub discussions](https://github.com/ncar-xdev/xcollection/discussions). Please include a self-contained reproducible example if possible.
 
 ```{toctree}
 ---
@@ -28,7 +28,7 @@ hidden:
 
 contributing.md
 changelog.md
-GitHub Repo <https://github.com/NCAR/xcollection>
-GitHub discussions <https://github.com/NCAR/xcollection/discussions>
+GitHub Repo <https://github.com/ncar-xdev/xcollection>
+GitHub discussions <https://github.com/ncar-xdev/xcollection/discussions>
 
 ```

@@ -26,7 +26,7 @@ xcollection can be installed in three ways:
 
     .. code:: bash
 
-        $ git clone https://github.com/NCAR/xcollection
+        $ git clone https://github.com/ncar-xdev/xcollection
         $ cd xcollection
         $ python -m pip install -e .
 
