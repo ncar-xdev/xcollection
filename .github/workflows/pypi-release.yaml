@@ -1,8 +1,9 @@
-name: Build and Upload xcollection to PyPI
+name: Build distribution
 on:
   release:
     types:
       - published
+  push:
 
 jobs:
   build-artifacts:
