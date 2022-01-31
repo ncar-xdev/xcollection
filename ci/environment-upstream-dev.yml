@@ -1,0 +1,21 @@
+name: xcollection-dev
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - dask
+  - fsspec
+  - netcdf4
+  - pip
+  - pooch
+  - pydantic
+  - pytest
+  - pytest-cov
+  - pytest-sugar
+  - pytest-xdist
+  - toolz
+  - xarray>=0.18
+  - zarr
+  - pip:
+      - git+https://github.com/pydata/xarray
+      - -r ../requirements.txt
