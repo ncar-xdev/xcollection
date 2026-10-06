@@ -9,7 +9,7 @@ import toolz
 import xarray as xr
 from xarray.core.weighted import Weighted
 
-unicode_key = u'\U0001F511'
+unicode_key = u'\U0001f511'
 
 
 def _rpartial(func, *args, **kwargs):
